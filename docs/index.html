@@ -5,11 +5,20 @@
     <link rel="stylesheet" href="leaflet/leaflet.css" />
     <script src="leaflet/leaflet.js"></script>
 
+
     <style>
         #map { width: 800px; height: 600px; }
         body { font: 16px/1.4 "Helvetica Neue", Arial, sans-serif; }
         .ghbtns { position: relative; top: 4px; margin-left: 5px; }
         a { color: #0077ff; }
+	.leaflet-control-mouseposition {
+  background-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 5px #bbb;
+  padding: 0 5px;
+  margin:0;
+  color: #333;
+  font: 11px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
     </style>
 </head>
 <body>
@@ -21,8 +30,8 @@
 <div id="map"></div>
 
 
-
 <script src="leaflet/leaflet-heat.js"></script>
+<script src="leaflet/L.Control.MousePosition.js"></script>
 
 <script src="data.js"></script>
 <script>
@@ -38,7 +47,9 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 	}).addTo(map);
 
 
-var heat = L.heatLayer(addressPoints,{radius: 25, blur: 10, minOpacity: 0.75} ).addTo(map);
+var heat = new L.heatLayer(addressPoints,{radius: 25, blur: 10, minOpacity: 0.75} ).addTo(map);
+var scale = new L.control.scale().addTo(map);
+L.control.mousePosition().addTo(map);
 
 </script>
 </body>
