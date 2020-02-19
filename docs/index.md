@@ -1,2 +1,2 @@
 
-[Link](index.html)
+[Carte](leaflet.html)
