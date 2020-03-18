@@ -5,7 +5,9 @@
     	<link rel="stylesheet" href="leaflet/leaflet.css" />
     	<script src="leaflet/leaflet.js"></script>
     	<link rel="stylesheet" href="leaflet/MarkerCluster.css" />
-		<link rel="stylesheet" href="leaflet/MarkerCluster.Default.css" />
+    	<link rel="stylesheet" href="leaflet/leaflet.fullscreen.css" />
+	
+	<link rel="stylesheet" href="leaflet/MarkerCluster.Default.css" />
     	<style>
         	#map { width: 1200px; height: 800px; }
         	body { font: 16px/1.4 "Helvetica Neue", Arial, sans-serif; }
@@ -41,6 +43,10 @@
 <script src="leaflet/leaflet.markercluster-src.js"></script>
 <script src="leaflet/leaflet-heat.js"></script>
 <script src="leaflet/L.Control.MousePosition.js"></script>
+<script src="leaflet/Leaflet.fullscreen.min.js"></script>
+<script src="leaflet/leaflet.shpfile.js"></script>
+<script src="leaflet/catiline.js"></script>
+
 <script src="data.js"></script>
 <script>
 	var map = L.map('map').setView([46,-64], 5);
@@ -51,6 +57,8 @@
 			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
 		id: 'mapbox/streets-v11'
 	}).addTo(map);
+
+
 	var heat = new L.heatLayer(addressPoints1,{radius: 25, blur: 10, minOpacity: 0.6} ).addTo(map);
 	var markers = new L.markerClusterGroup({ chunkedLoading: true });
 		for (var i = 0; i < addressPoints1.length; i++) {
@@ -61,8 +69,29 @@
 			markers.addLayer(marker);
 		}
 		map.addLayer(markers);
+	map.addControl(new L.Control.Fullscreen());
 	var scale = new L.control.scale().addTo(map);
 	L.control.mousePosition().addTo(map);
+	var shpfile = new L.Shapefile('shp/NAFO_Divisions.zip', {
+		onEachFeature: function(feature, layer) 
+			{
+			if (feature.properties) 
+				{
+				layer.bindPopup(Object.keys(feature.properties).map(function(k) 
+					{
+					return k + ": " + feature.properties[k];
+					}
+				).join("<br />"), 
+					{
+					maxHeight: 200
+					});
+				}
+			}
+	});
+	shpfile.addTo(map);
+	shpfile.once("data:loaded", function() {
+	console.log("finished loaded shapefile");
+	});
 </script>
 </body>
 </html>
