@@ -5,7 +5,9 @@
     	<link rel="stylesheet" href="leaflet/leaflet.css" />
     	<script src="leaflet/leaflet.js"></script>
     	<link rel="stylesheet" href="leaflet/MarkerCluster.css" />
-		<link rel="stylesheet" href="leaflet/MarkerCluster.Default.css" />
+    	<link rel="stylesheet" href="leaflet/leaflet.fullscreen.css" />
+
+	<link rel="stylesheet" href="leaflet/MarkerCluster.Default.css" />
     	<style>
         	#map { width: 1200px; height: 800px; }
         	body { font: 16px/1.4 "Helvetica Neue", Arial, sans-serif; }
@@ -41,6 +43,8 @@
 <script src="leaflet/leaflet.markercluster-src.js"></script>
 <script src="leaflet/leaflet-heat.js"></script>
 <script src="leaflet/L.Control.MousePosition.js"></script>
+<script src="leaflet/Leaflet.fullscreen.min.js"></script>
+
 <script src="data.js"></script>
 <script>
 	var map = L.map('map').setView([46,-64], 5);
@@ -61,6 +65,7 @@
 			markers.addLayer(marker);
 		}
 		map.addLayer(markers);
+	map.addControl(new L.Control.Fullscreen());
 	var scale = new L.control.scale().addTo(map);
 	L.control.mousePosition().addTo(map);
 </script>
