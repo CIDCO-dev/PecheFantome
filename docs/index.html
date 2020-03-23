@@ -9,7 +9,7 @@
 	
 	<link rel="stylesheet" href="leaflet/MarkerCluster.Default.css" />
     	<style>
-        	#map { width: 1200px; height: 800px; }
+        	#map { width: 1200px; height: 800px;  margin: auto;}
         	body { font: 16px/1.4 "Helvetica Neue", Arial, sans-serif; }
         	.ghbtns { position: relative; top: 4px; margin-left: 5px; }
         	a { color: #0077ff; }
@@ -37,7 +37,7 @@
 <center>
 <font size="18">Peche Fantome</font></br>
 <font size="6">Engins de pêche perdus déclarés.</font>
-</br></br>
+</br></br></center>
 <div id="map"></div>
 <script src="leaflet/leaflet.markercluster.js"></script>
 <script src="leaflet/leaflet.markercluster-src.js"></script>
@@ -47,28 +47,94 @@
 <script src="leaflet/leaflet.shpfile.js"></script>
 <script src="leaflet/catiline.js"></script>
 
+
 <script src="data.js"></script>
 <script>
 	var map = L.map('map').setView([46,-64], 5);
 	var baseLayer = new L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-		maxZoom: 18,
+		maxZoom: 18, minZoom: 4, 
 		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
 			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
 			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
 		id: 'mapbox/streets-v11'
 	}).addTo(map);
+	
 
-
-	var heat = new L.heatLayer(addressPoints1,{radius: 25, blur: 10, minOpacity: 0.6} ).addTo(map);
-	var markers = new L.markerClusterGroup({ chunkedLoading: true });
-		for (var i = 0; i < addressPoints1.length; i++) {
-			var a = addressPoints1[i];
+	var hunconfirmed = new L.heatLayer(unconfirmed,{radius: 25, blur: 10, minOpacity: 0.6} ).addTo(map);
+	var munconfirmed= new L.markerClusterGroup({ id: "munconfirmed", chunkedLoading: true });
+		
+		for (var i = 0; i < unconfirmed.length; i++) {
+			var a = unconfirmed[i];
 			var title = a[2];
 			var marker = L.marker(L.latLng(a[0], a[1]), { title: title });
 			marker.bindPopup(title);
-			markers.addLayer(marker);
+			munconfirmed.addLayer(marker);
 		}
-		map.addLayer(markers);
+		map.addLayer(munconfirmed);
+	
+	var hlongline = new L.heatLayer(longline,{radius: 25, blur: 10, minOpacity: 0.6} ).addTo(map);
+	var mlongline = L.markerClusterGroup({id: "mlongline", chunkedLoading: true });
+		for (var i = 0; i < longline.length; i++) {
+			var a = longline[i];
+			var title = a[2];
+			var marker = L.marker(L.latLng(a[0], a[1]), { title: title });
+			marker.bindPopup(title);
+			mlongline.addLayer(marker);
+		}
+		map.addLayer(mlongline);
+	
+	var hnet = new L.heatLayer(net,{radius: 25, blur: 10, minOpacity: 0.6} ).addTo(map);
+	var mnet = L.markerClusterGroup({id: "mnet", chunkedLoading: true });
+		for (var i = 0; i < net.length; i++) {
+			var a = net[i];
+			var title = a[2];
+			var marker = L.marker(L.latLng(a[0], a[1]), { title: title });
+			marker.bindPopup(title);
+			mnet.addLayer(marker);
+		}
+		map.addLayer(mnet);
+
+	var hcage = new L.heatLayer(cage,{radius: 25, blur: 10, minOpacity: 0.6} ).addTo(map);
+	var mcage = L.markerClusterGroup({id: "mcage", chunkedLoading: true });
+		for (var i = 0; i < cage.length; i++) {
+			var a = cage[i];
+			var title = a[2];
+			var marker = L.marker(L.latLng(a[0], a[1]), { title: title });
+			marker.bindPopup(title);
+			mcage.addLayer(marker);
+		}
+		map.addLayer(mcage);
+
+	var hother = new L.heatLayer(other,{radius: 25, blur: 10, minOpacity: 0.6} ).addTo(map);
+	var mother =  L.markerClusterGroup({id: "mother", chunkedLoading: true });
+		for (var i = 0; i < other.length; i++) {
+			var a = other[i];
+			var title = a[2];
+			var marker = L.marker(L.latLng(a[0], a[1]), { title: title });
+			marker.bindPopup(title);
+			mother.addLayer(marker);
+		}
+		map.addLayer(mother);
+	
+	
+
+	L.control.layers({},{
+		"Marker Unconfirmed":munconfirmed,
+		"Heat Unconfirmed":hunconfirmed,
+		"Marker Longline":mlongline,
+		"Heat Longline":hlongline,
+		"Marker Net":mnet,
+		"Heat Net":hnet,
+		"Marker Cage":mcage,
+		"Heat Cage":hcage,
+		"Marker Other":mother,
+		"Heat Other":hother
+		
+		
+		
+		}).addTo(map);
+	
+	
 	map.addControl(new L.Control.Fullscreen());
 	var scale = new L.control.scale().addTo(map);
 	L.control.mousePosition().addTo(map);
