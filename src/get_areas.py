@@ -4,7 +4,7 @@ import gpxpy
 import gpxpy.gpx
 
 class areas:
-	#DB_connection + query
+	#DB_connection
 	db = mysql.connector.connect(
 	  host="cidco.ca",
 	  user="crabnet",
@@ -14,6 +14,7 @@ class areas:
 
 	
 	def __init__(self,query):
+		# selection du type de query
 		if query == "trap" :
 			query = "SELECT * FROM crabnet.dfo_engins WHERE type='CASIER/CAGE - TRAP/POT'"
 			self.query = query
@@ -22,8 +23,8 @@ class areas:
 		
 	
 	def get_data(self):
-		cursor = areas.db.cursor()
-		cursor.execute(self.query)
+		cursor = areas.db.cursor() #get object mysql-connector
+		cursor.execute(self.query) #execute query
 		result = cursor.fetchall()
 		gpx = gpxpy.gpx.GPX()
 		gpx.name = 'Casiers perdus'
