@@ -18,12 +18,17 @@ class query_DB:
 		if query == "trap" :
 			query = "SELECT * FROM crabnet.dfo_engins WHERE type='CASIER/CAGE - TRAP/POT'"
 			self.query = query
-		else:
-			print("error")
+		else: #if query is not premade by the CIDCO
+			self.query = query
+			try: # try custom query
+				cursor = query_DB.db.cursor()
+				cursor.execute(self.query)
+			except mysql.connector.Error as err : #if query is not valid , print error
+				print(err)
 		
 	
 	def get_areas(self):
-		cursor = atlantian.db.cursor() #get object mysql-connector
+		cursor = query_DB.db.cursor() #get object mysql-connector
 		cursor.execute(self.query) #execute query
 		result = cursor.fetchall()
 		gpx = gpxpy.gpx.GPX()
@@ -48,6 +53,6 @@ class query_DB:
 		return result
 
 #usage
-test = atlantian("trap")
+test = query_DB("tr")
 data = test.get_areas()
 print(data)
