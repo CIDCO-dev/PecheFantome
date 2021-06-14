@@ -3,7 +3,7 @@ import mysql.connector
 import gpxpy
 import gpxpy.gpx
 
-class atlantian:
+class query_DB:
 	#DB_connection
 	db = mysql.connector.connect(
 	  host="cidco.ca",
@@ -47,6 +47,7 @@ class atlantian:
 			
 		return result
 
+#usage
 test = atlantian("trap")
 data = test.get_areas()
 print(data)
