@@ -1,7 +1,7 @@
 import sys
 import mysql.connector
 import gpxpy
-import gpxpy.gpx
+import gpxpy.gpx # needed if installed via : apt install python3-gpxpy
 
 class query_DB:
 	#DB_connection
@@ -18,18 +18,18 @@ class query_DB:
 		if query == "trap" :
 			query = "SELECT * FROM crabnet.dfo_engins WHERE type='CASIER/CAGE - TRAP/POT'"
 			self.query = query
-		else: #if query is not premade by the CIDCO
+		else: #Si la query n'est pas pre-fait par le CIDCO
 			self.query = query
 			try: # try custom query
 				cursor = query_DB.db.cursor()
 				cursor.execute(self.query)
-			except mysql.connector.Error as err : #if query is not valid , print error
+			except mysql.connector.Error as err : #si la query n'est pas valide , print error
 				print(err)
 		
-	
+	#get areas de l'objet query_DB
 	def get_areas(self):
-		cursor = query_DB.db.cursor() #get object mysql-connector
-		cursor.execute(self.query) #execute query
+		cursor = query_DB.db.cursor() 
+		cursor.execute(self.query) #executer query
 		result = cursor.fetchall()
 		gpx = gpxpy.gpx.GPX()
 		gpx.name = 'Casiers perdus'
@@ -53,6 +53,6 @@ class query_DB:
 		return result
 
 #usage
-test = query_DB("tr")
+test = query_DB("trap")
 data = test.get_areas()
 print(data)
