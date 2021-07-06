@@ -23,17 +23,17 @@ class query_DB:
 			try: # try custom query
 				cursor = query_DB.db.cursor()
 				cursor.execute(self.query)
-			except mysql.connector.Error as err : #si la query n'est pas valide , print error
+			except mysql.connector.Error as err : #si la query n'est pas valide , print error code
 				print(err)
 		
 	#get areas de l'objet query_DB
-	def get_areas(self):
+	def get_areas(self, area_name , area_description):
 		cursor = query_DB.db.cursor() 
 		cursor.execute(self.query) #executer query
 		result = cursor.fetchall()
 		gpx = gpxpy.gpx.GPX()
-		gpx.name = 'Casiers perdus'
-		gpx.description = 'Casiers de peche au crabe perdus'
+		gpx.name = area_name
+		gpx.description = area_description
 
 		# Pour tous les casiers rapportes
 		for trap in result:
@@ -48,11 +48,22 @@ class query_DB:
 			waypoint.name      = "Casier {}".format(trap[0])
 			waypoint.description = trap[2]
 			gpx.waypoints.append(waypoint)
-		result = gpx.to_xml()
 			
-		return result
+		return gpx
 
+	def export_to(self,area,export_format):
+		if export_format == "xml":
+			resultat = area.to_xml()
+			return resultat
+		else:
+			resultat = "error"
+			return resultat
+		
+	
+"""
 #usage
-test = query_DB("trap")
-data = test.get_areas()
+test = query_DB("trap") # creation objet query_DB
+area = test.get_areas('Casiers perdus','Casiers de peche au crabe perdus')	# methode
+data = test.export_to(area,"xml")
 print(data)
+"""
