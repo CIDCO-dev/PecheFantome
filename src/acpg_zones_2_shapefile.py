@@ -1,41 +1,41 @@
 import shapefile
 
 #convertir des degrés a des sous-unités du degré 
-def deg2sud(x,y):
-	if x < 0 :
-		x = abs(x)
-		directionx = "S"
+def deg2sud(latitude,longitude):
+	if latitude < 0 :
+		latitude = abs(latitude)
+		directiony = "S"
 	else :
-		directionx = "N"
-	deg = int(x)
-	temp = 60 * (x - deg)
+		directiony = "N"
+	deg = int(latitude)
+	temp = 60 * (latitude - deg)
 	minutes = int(temp)
 	seconds = int(60 * (temp - minutes))
 	deg = '{}'.format(deg)
 	minutes = '{}'.format(minutes)
 	seconds = '{}'.format(seconds)
-	sudx = deg +"°"+minutes+"’"+seconds+"’’"+directionx
+	latitude = deg +"°"+minutes+"’"+seconds+'"'+directiony
 
-	if y < 0 :
-		y = abs(y)
-		directiony = "W"
+	if longitude < 0 :
+		longitude = abs(longitude)
+		directionx = "W"
 	else :
-		directiony = "E"	
-	deg = int(y)
-	temp = 60 * (y - deg)
+		directionx = "E"	
+	deg = int(longitude)
+	temp = 60 * (longitude - deg)
 	minutes = int(temp)
 	seconds = int(60 * (temp - minutes))
 	deg = '{}'.format(deg)
 	minutes = '{}'.format(minutes)
 	seconds = '{}'.format(seconds)
-	sudy = deg +"°"+minutes+"’"+seconds+"’’"+directiony
+	longitude = deg +"°"+minutes+"’"+seconds+'"'+directionx
 	
-	return sudx,sudy
+	return latitude,longitude
 			
 #convertir des sous-unités du degré a des degrés 			
-def sud2deg(x,y): # le programme prends pour aquis que les coordonnees sont des coordonnees au QC et donc les coordonnees ont des directions (x Nord,y Ouest)
+def sud2deg(latitude,longitude): 
 	#print(len(x))
-	temp = x.split("°")
+	temp = longitude.split("°")
 	deg = float(temp[0])
 	del temp[0]
 	x=temp[0]
@@ -43,10 +43,10 @@ def sud2deg(x,y): # le programme prends pour aquis que les coordonnees sont des 
 	minutes = float(temp[0])
 	secondes = float(temp[1])
 	centime = (secondes/3600) + (minutes/60)
-	deg = deg + centime
-	degx = round(deg,3)
+	deg = (deg + centime)
+	longitude = round(deg,3)
 	
-	temp = y.split("°")
+	temp = latitude.split("°")
 	deg = float(temp[0])
 	del temp[0]
 	y=temp[0]
@@ -54,10 +54,10 @@ def sud2deg(x,y): # le programme prends pour aquis que les coordonnees sont des 
 	minutes = float(temp[0])
 	secondes = float(temp[1])
 	centime = (secondes/3600) + (minutes/60)
-	deg = (deg + centime) * -1
-	degy = round(deg,3)
+	deg = (deg + centime)
+	latitude = round(deg,3)
 	
-	return degx,degy
+	return latitude,longitude 
 
 	
 def ecriture_polygon_2shp(dic,filename):
@@ -72,21 +72,15 @@ def ecriture_polygon_2shp(dic,filename):
 		w.record(element)
 	w.close()
 
-#semblerait qu'on ait pas besoin de boucler la boucle
-def test_debut_egal_fin_polygone(dic,key): #non terminer
-	coordinates = dic[key]
-	nb_points = len(coordinates[0])-1
-	if coordinates[0][0] != coordinates[0][nb_points]:
-		print("pas bon")
-		#fonction test si le points n'est pas dans la liste de points
-		#si fonction test == True --> ajouter le premier point a la fin
-		#si fonction test == True --> return True
-	else:
-		#print("premier et dernier point identique")
-		return True
 
+def Lat_Long_2_x_y(latitude,longitude):
+	y = latitude
+	x = longitude
+	return x,y
 
-
+def changer_direction(coord):
+	coord = coord * -1
+	return coord
 
 #coordonnes (non-valide)
 """
@@ -111,13 +105,15 @@ for i in range(len(zones)):
 #print(acpg_zones)
 ecriture_polygon_2shp(acpg_zones,"acpg.shp")
 """
-#usage 2
-#x = sud2deg("47°56’13’’","65°18’01’’")
-#print(x)
-	
-#x = deg2sud(47.937,-65.303)
-#print(x)
 
+#usage 2
+"""
+x = sud2deg("65°18’01’’","47°56’13’’")
+print(x)
+
+x = deg2sud(47.937,-65.3003)
+print(x)
+"""
 
 
 #usage 3
@@ -132,3 +128,47 @@ for zone in sud_coordinates:
 		coordinate = sud2deg(x,y)
 		print(coordinate)
 """
+
+# creation du shapefile pour les zones de l'acpg
+"""
+#inverser x & y de tous les points de la liste de liste de tuple 
+new_sud_coordinates = []
+polygone = []
+for zone in sud_coordinates:
+	for point in zone:
+		latitude = point[0]
+		longitude = point[1]
+		#print(x,y)
+		x,y = Lat_Long_2_x_y(latitude,longitude)
+		point = list(point)
+		point[0] = x
+		point[1] = y
+		polygone += [tuple(point)]
+	new_sud_coordinates += [polygone]
+	polygone = []
+sud_coordinates = new_sud_coordinates
+
+#convertir tous les points en degree decimal
+acpg_zones={}
+coordinates = []
+deg_coordinates = []
+for zone in sud_coordinates:
+	
+	for coord in zone:
+		x = coord[0]
+		y = coord[1]
+		x,y = sud2deg(x,y)
+		x = changer_direction(x)
+		coordinate = x,y
+		coordinates += [coordinate]
+	deg_coordinates += [coordinates]
+	coordinates = []
+
+#ecrire les polygons dans un fichier .shp
+for i in range(len(zones)):
+	acpg_zones.update({zones[i] : deg_coordinates[i]})
+#print(acpg_zones)
+ecriture_polygon_2shp(acpg_zones,"acpg.shp")
+#print(acpg_zones)
+"""
+
