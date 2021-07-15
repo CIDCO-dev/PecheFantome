@@ -96,9 +96,9 @@ sud_coordinates = [("47°56’13’’","65°18’01’’"),("47°54’25’’
 
 
 #usage 1
-"""
-#ecrire dans un shapefile des polygones a partir d'un dictionaire {zone : coordinate }
 
+#ecrire dans un shapefile des polygones a partir d'un dictionaire {zone : coordinate }
+"""
 acpg_zones = {}
 for i in range(len(zones)):
 	acpg_zones.update({zones[i] : coordinates[i]})
@@ -130,7 +130,7 @@ for zone in sud_coordinates:
 """
 
 # creation du shapefile pour les zones de l'acpg
-"""
+
 #inverser x & y de tous les points de la liste de liste de tuple 
 new_sud_coordinates = []
 polygone = []
@@ -168,7 +168,7 @@ for zone in sud_coordinates:
 for i in range(len(zones)):
 	acpg_zones.update({zones[i] : deg_coordinates[i]})
 #print(acpg_zones)
-ecriture_polygon_2shp(acpg_zones,"acpg.shp")
+ecriture_polygon_2shp(acpg_zones,"zone_de_peche_acpg.shp")
 #print(acpg_zones)
-"""
+
 
