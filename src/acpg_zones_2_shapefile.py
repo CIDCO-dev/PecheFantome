@@ -72,6 +72,12 @@ def ecriture_polygon_2shp(dic,filename):
 		w.record(element)
 	w.close()
 
+def ecriture_points_2shp(liste_points,filename):
+	w = shapefile.Writer(filename)
+	w.field('name', 'C')
+	w.multipoint(liste_points)
+	w.record('multipoint')
+	w.close()
 
 def Lat_Long_2_x_y(latitude,longitude):
 	y = latitude
@@ -130,7 +136,7 @@ for zone in sud_coordinates:
 """
 
 # creation du shapefile pour les zones de l'acpg
-
+"""
 #inverser x & y de tous les points de la liste de liste de tuple 
 new_sud_coordinates = []
 polygone = []
@@ -171,4 +177,4 @@ for i in range(len(zones)):
 ecriture_polygon_2shp(acpg_zones,"zone_de_peche_acpg.shp")
 #print(acpg_zones)
 
-
+"""
