@@ -1,6 +1,4 @@
-#import sys
-import shapefile
-import csv
+import GGlib
 import mysql.connector
 import gpxpy
 #import gpxpy.gpx # needed if installed via : apt install python3-gpxpy
@@ -55,19 +53,6 @@ def get_elements(element_name,element_description):
 	areas = gpx.to_xml()
 	return areas
 
-def ecriture_points_2shp(liste_points, filename):
-	w = shapefile.Writer(filename+".shp")
-	w.field('name', 'C')
-	w.multipoint(liste_points)
-	w.record('multipoint')
-	w.close()
-
-def write_points_2csv(points_list, filename):
-	with open(filename+".csv", 'w', newline='') as csvfile:
-		file = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-		for coord in points_list:
-			file.writerow(coord)
-
 def extract_coordinates(areas):
 	root = ET.fromstring(areas)
 	liste_coordinates = []
@@ -85,10 +70,10 @@ def export_to(areas,export_format,filename):
 			f.write(areas)
 	elif export_format == "shapefile":
 		liste_coordinates = extract_coordinates(areas)
-		ecriture_points_2shp(liste_coordinates,filename)
+		GGlib.ecriture_points_2shp(liste_coordinates,filename)
 	elif export_format == "csv":
 		liste_coordinates = extract_coordinates(areas)
-		write_points_2csv(liste_coordinates,filename)
+		GGlib.write_points_2csv(liste_coordinates,filename)
 	else:
 		error = "error: not a valid format ! \n options are : gpx, shapefile, csv"
 		print(error)
