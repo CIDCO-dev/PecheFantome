@@ -1,69 +1,81 @@
-import sys
+import GGlib
 import mysql.connector
 import gpxpy
-import gpxpy.gpx # needed if installed via : apt install python3-gpxpy
+#import gpxpy.gpx # needed if installed via : apt install python3-gpxpy
+from xml.etree import ElementTree as ET
 
-class query_DB:
-	#DB_connection
+#############################################################
+#      ******  *******       **     ******   ****     ** ******** **********
+#     **////**/**////**     ****   /*////** /**/**   /**/**///// /////**///
+#    **    // /**   /**    **//**  /*   /** /**//**  /**/**          /**
+#   /**       /*******    **  //** /******  /** //** /**/*******     /**
+#   /**       /**///**   **********/*//// **/**  //**/**/**////      /**
+#   //**    **/**  //** /**//////**/*    /**/**   //****/**          /**
+#    //****** /**   //**/**     /**/******* /**    //***/********    /**
+#     //////  //     // //      // ///////  //      /// ////////     //
+#
+#
+#         __       __
+#        / <`     '> \
+#       (  / @   @ \  )
+#        \(_ _\_/_ _)/
+#      (\ `-/     \-' /)
+#       "===\     /==="
+#        .==')___(`==.
+#       ' .='     `=.
+#
+##############################################################
+def get_elements(element_name,element_description):
 	db = mysql.connector.connect(
 	  host="cidco.ca",
 	  user="crabnet",
 	  password="crabnet213141$",
 	  database="crabnet"
 	)
+	cursor = db.cursor()
+	cursor.execute("SELECT * FROM crabnet.dfo_engins WHERE type='CASIER/CAGE - TRAP/POT'")
+	result = cursor.fetchall()
 
-	
-	def __init__(self,query):
-		# selection du type de query
-		if query == "trap" :
-			query = "SELECT * FROM crabnet.dfo_engins WHERE type='CASIER/CAGE - TRAP/POT'"
-			self.query = query
-		else: #Si la query n'est pas pre-fait par le CIDCO
-			self.query = query
-			try: # try custom query
-				cursor = query_DB.db.cursor()
-				cursor.execute(self.query)
-			except mysql.connector.Error as err : #si la query n'est pas valide , print error code
-				print(err)
-		
-	#get areas de l'objet query_DB
-	def get_areas(self, area_name , area_description):
-		cursor = query_DB.db.cursor() 
-		cursor.execute(self.query) #executer query
-		result = cursor.fetchall()
-		gpx = gpxpy.gpx.GPX()
-		gpx.name = area_name
-		gpx.description = area_description
+	gpx = gpxpy.gpx.GPX()
+	gpx.name = element_name
+	gpx.description = element_description
 
-		# Pour tous les casiers rapportes
-		for trap in result:
-			longitude = trap[6]
-			latitude  = trap[7]
+	# Pour tous les casiers rapportes
+	for trap in result:
+		longitude = trap[6]
+		latitude  = trap[7]
+		waypoint = gpxpy.gpx.GPXWaypoint()
+		waypoint.longitude = longitude
+		waypoint.latitude  = latitude
+		waypoint.name      = "Casier {}".format(trap[0])
+		waypoint.description = trap[2]
+		gpx.waypoints.append(waypoint)
+	areas = gpx.to_xml()
+	return areas
 
-			# TODO: exclude, and see if in zone
-			waypoint = gpxpy.gpx.GPXWaypoint()
-			waypoint.longitude = longitude
-			waypoint.latitude  = latitude
-			#waypoint.symbol    = 'Marks-Mooring-Float'
-			waypoint.name      = "Casier {}".format(trap[0])
-			waypoint.description = trap[2]
-			gpx.waypoints.append(waypoint)
-			
-		return gpx
+def extract_coordinates(areas):
+	root = ET.fromstring(areas)
+	liste_coordinates = []
+	for i in range(1, len(root)):
+		coord = root[i].attrib
+		latitude = float(coord['lat'])
+		longitude = float(coord['lon'])
+		coordinate = [longitude, latitude]
+		liste_coordinates += [coordinate]
+	return liste_coordinates
 
-	def export_to(self,area,export_format):
-		if export_format == "xml":
-			resultat = area.to_xml()
-			return resultat
-		else:
-			resultat = "error"
-			return resultat
-		
-	
-"""
-#usage
-test = query_DB("trap") # creation objet query_DB
-area = test.get_areas('Casiers perdus','Casiers de peche au crabe perdus')	# methode
-data = test.export_to(area,"xml")
-print(data)
-"""
+def export_to(areas,export_format,filename):
+	if export_format == "gpx":
+		with open(filename+".gpx", "w") as f:
+			f.write(areas)
+	elif export_format == "shapefile":
+		liste_coordinates = extract_coordinates(areas)
+		GGlib.ecriture_points_2shp(liste_coordinates,filename)
+	elif export_format == "csv":
+		liste_coordinates = extract_coordinates(areas)
+		GGlib.write_points_2csv(liste_coordinates,filename)
+	else:
+		error = "error: not a valid format ! \n options are : gpx, shapefile, csv"
+		print(error)
+
+
