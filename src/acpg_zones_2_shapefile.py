@@ -1,4 +1,5 @@
 import shapefile
+import numpy as np
 
 #convertir des degrés a des sous-unités du degré 
 def deg2sud(latitude,longitude):
