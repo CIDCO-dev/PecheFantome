@@ -1,0 +1,8 @@
+path: /home/glm/yolov5/train_data/
+train: images/
+val: images/
+
+#nc = number of class
+nc: 3
+#in opensidescan when creating an inventory object, the object name has to match the class name
+names: ['crabpot', 'rope', shipwreck]
