@@ -87,7 +87,7 @@ def process_fake_image():
                         center = (y_center, x_center)
                         img = cv2.seamlessClone(trap, crop_img, mask, center, cv2.MIXED_CLONE)
                         
-                        img[trap_y:trap_height+trap_y, trap_x:trap_width+trap_x] = trap
+                        #img[trap_y:trap_height+trap_y, trap_x:trap_width+trap_x] = trap
                         global count
                         img_name = "fake-crabtrap" + str(count) + ".png"
                         img_path = temp_saving_path + img_name
