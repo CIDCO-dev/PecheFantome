@@ -63,7 +63,6 @@ status = export2DB()
 if(status == True):
 	print("export to db done")
 """
-# do the work
 tif_fileList = []
 tifs_path = "./mammal"
 for tif in os.listdir(tifs_path):
@@ -77,13 +76,14 @@ for i in range(len(tif_fileList)):
 	index = tif_fileList[i]
 	index = index[2:-4]
 	index = int(index)-2
-	output_fileName = name_list[index] + ".shp"
+	output_fileName = name_list[index]
 	outputPath = "."
 	input_file = os.path.join("./mammal",tif_fileList[i])
 	if (extract_contour(input_file, outputPath, output_fileName)):
 		print(output_fileName, " created")
 	path = tif_fileList[i]
 	path = path[:-4]
+	output_fileName += ".shp"
 	shapefile_path = os.path.join(path,output_fileName)
 	
 	if(export2DB(shapefile_path)):
