@@ -29,21 +29,21 @@ def findObjects(outputs,img):
 					classId = np.argmax(scores)
 					confidence = scores[classId]
 					if confidence > confThreshold:
-						center_x = int(det[0] *wT)
-						center_y = int(det[1] *hT)
-						width = int(det[2]*wT)
-						height = int(det[3] * hT)
-						left = int((center_x - width/2))
-						top = int((center_y - height/2))
-						bbox.append([center_x, center_y, width, height])#pas bon
+						width = int(det[2])
+						height = int(det[3])
+						top_left_x = int((det[0] - width))
+						top_left_y = int((det[1] -70 - height)) # ouin pas sure que ca soit la bonne solution
+						bbox.append([top_left_x, top_left_y, width, height])
 						classIds.append(classId) # ca c'est bon
 						confs.append(float(confidence))
-						print(left, top, width, height) #pas bon
+						#print(left, top, width, height) 
+						#print(det[0],det[1],det[2],det[3])
 						
 				        
 	indices = cv2.dnn.NMSBoxes(bbox, confs,confThreshold,nmsThreshold)
 
 	for i in indices:
+		print(len(indices))
 		box = bbox[i]
 		x,y,w,h = box[0], box[1], box[2], box[3]
 		cv2.rectangle(img, (x,y),(x+w,y+h),(255,0,255),2)
