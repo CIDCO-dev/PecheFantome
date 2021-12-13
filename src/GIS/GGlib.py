@@ -1,5 +1,7 @@
 import shapefile
 import csv
+import os
+import subprocess
 
 #convertir des degrés a des sous-unités du degré 
 def deg2sud(latitude,longitude):
@@ -65,7 +67,9 @@ def write_points_2csv(points_list, filename):
 		file = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
 		for coord in points_list:
 			file.writerow(coord)
-	
+
+# dic = dictionary
+# key : string (polygon name), Value (list of point : vertex of polygon)
 def ecriture_polygon_2shp(dic,filename):
 	liste_element = list(dic)
 
@@ -93,8 +97,34 @@ def changer_direction(coord):
 	coord = coord * -1
 	return coord
 
+#sudo apt install gdal-bin
+def extract_contour_Tiff_2_Shp(inputFilePath, outputPath, fileName):
+	gdal_contour = "/usr/bin/gdal_contour"
+	if not os.path.exists(inputFilePath):
+		print("input File Path does not exist")
+		return False
+	directoryName = os.path.basename(inputFilePath)
+	directory = directoryName[:-4]
+	outputPath = os.path.join(outputPath,directory)
+	if not os.path.exists(outputPath):
+		os.mkdir(outputPath)
+	fileName = fileName + ".shp"
+	outputPath = os.path.join(outputPath, fileName)
+	export = subprocess.Popen([gdal_contour, "-a", "sightings", "-i", "1", "-f", "ESRI Shapefile", inputFilePath, outputPath])
+	export.wait()
+	return True
 
 
+#ToDo pass as argument mysql obj connection
+#sudo apt install gdal-bin
+def export_Shp2DB(filePath):
+	ogr2ogr = "/usr/bin/ogr2ogr"
+	#ogr2ogr -f "MySQL"   MYSQL:"crabnet,host=localhost,user=admin,password=jmlespatate,port=3306" -a_srs "EPSG:4326" ‘/home/pat/PecheFantome/data/Zones Protegees MPO/DFO_MPA_MPO_ZPM.shp’
+	export = subprocess.Popen([ogr2ogr, "-f", "MYSQL", "MYSQL:crabnet,host=localhost,user=admin,password=jmlespatate,port=3306", "-a_srs", "EPSG:4326", filePath])
+	if (export.wait() != 0):
+		return False
+	else:
+		return True
 
 
 #zones = ['Baie des chaleurs','Canal de Grande-Rivière','Nord Shediac Valley','Western Bradelle Valley','Eastern Bradelle Valley']
