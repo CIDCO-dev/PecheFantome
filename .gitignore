@@ -7,3 +7,7 @@ src/detector/raw_test_data
 src/detector/temp
 src/detector/test_data
 src/detector/yolov5
+.idea
+*pycache*
+venv/
+

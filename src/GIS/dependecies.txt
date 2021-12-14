@@ -1,0 +1,13 @@
+
+shapefile
+pip install pyshp
+
+mysql
+pip install mysql-connector-python
+
+gpxpy
+pip install gpxpy
+
+GDAL
+pip install GDAL
+sudo apt install python3-gdal
