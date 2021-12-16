@@ -64,15 +64,14 @@ def sud2deg(latitude,longitude):
 
 def write_points_2csv(points_list, filename):
 	with open(filename+".csv", 'w', newline='') as csvfile:
-		file = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+		file = csv.writer(csvfile, delimiter=",", quotechar='|', quoting=csv.QUOTE_MINIMAL)
 		for coord in points_list:
 			file.writerow(coord)
 
 # dic = dictionary
 # key : string (polygon name), Value (list of point : vertex of polygon)
-def ecriture_polygon_2shp(dic,filename):
+def write_polygon_2shp(dic,filename):
 	liste_element = list(dic)
-
 	w = shapefile.Writer(filename)
 	w.field('name','c','40')
 	for element in liste_element:
@@ -81,7 +80,7 @@ def ecriture_polygon_2shp(dic,filename):
 		w.record(element)
 	w.close()
 
-def ecriture_points_2shp(liste_points, filename):
+def write_points_2shp(liste_points, filename):
 	w = shapefile.Writer(filename)
 	w.field('name', 'C')
 	w.multipoint(liste_points)
@@ -93,7 +92,7 @@ def Lat_Long_2_x_y(latitude,longitude):
 	x = longitude
 	return x,y
 
-def changer_direction(coord):
+def change_direction(coord):
 	coord = coord * -1
 	return coord
 
@@ -115,22 +114,11 @@ def extract_contour_Tiff_2_Shp(inputFilePath, outputPath, fileName):
 	return True
 
 
-#ToDo pass as argument mysql obj connection
-#sudo apt install gdal-bin
-def export_Shp2DB(filePath):
-	ogr2ogr = "/usr/bin/ogr2ogr"
-	#ogr2ogr -f "MySQL"   MYSQL:"crabnet,host=localhost,user=admin,password=jmlespatate,port=3306" -a_srs "EPSG:4326" ‘/home/pat/PecheFantome/data/Zones Protegees MPO/DFO_MPA_MPO_ZPM.shp’
-	export = subprocess.Popen([ogr2ogr, "-f", "MYSQL", "MYSQL:crabnet,host=localhost,user=admin,password=jmlespatate,port=3306", "-a_srs", "EPSG:4326", filePath])
-	if (export.wait() != 0):
-		return False
-	else:
-		return True
-
 
 #zones = ['Baie des chaleurs','Canal de Grande-Rivière','Nord Shediac Valley','Western Bradelle Valley','Eastern Bradelle Valley']
 
 #sud_coordinates = [("47°56’13’’","65°18’01’’"),("47°54’25’’","65°18’01’’"),("48°06’18’’","64°36’00’’"),("48°12’03’’","64°36’00’’")],[("48°16’01’’","64°33’07’’"),("48°09’32’’","64°33’07’’"),("48°06’18’’","64°20’13’’"),("48°18’10’’","64°21’07’’")],[("48°27’36’’","63°48’39’’"),("48°07’04’’","64°00’00’’"),("48°07’04’’","63°45’00’’"),("48°27’36’’","63°25’15’’")],[("47°45’46’’","63°18’21’’"),("47°13’12’’","63°18’21’’"),("47°13’12’’","63°08’31’’"),("47°45’46’’","63°08’31’’")],[("47°35’27’’","62°34’04’’"),("47°01’00’’","62°38’13’’"),("47°01’00’’","62°26’20’’"),("47°35’27’’","62°25’55’’")]
-#print(coordinates[0])# return liste of point
+#print(coordinates[0])# return list of point
 #print(coordinates[0][0]) # return pair (x,y)
 #print (coordinates[0][0][0]) # return x or y
 

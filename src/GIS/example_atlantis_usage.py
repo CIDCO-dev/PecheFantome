@@ -1,22 +1,19 @@
 import Atlantis
 
 
-
-#db = Atlantis.GGDB()
-#result = db.query("trap")
+"""
+db = Atlantis.GGDB()
+result = db.query("trap")
 #print(result)
-#gpx = db.toGPX("test","testing")
-#print(gpx)
-#if(db.importSHP("/home/pat/KD2/megaptera_novaeangliae.shp")):
-#	print("done")
+gpx = db.dfo_engins2GPX("test","testing")
+print(gpx)
 
-#db2 = Atlantis.GGDB(database="Pat_test_DB")
-#result = db.query("show tables")
-#print(type(result))
-
-
+db2 = Atlantis.GGDB()
+result = db.query("show tables")
+print(result)
+result = db2.query("select * from acpg")
+print(result)
+"""
 db3 = Atlantis.GGDB()
 result = db3.extractSHP("acpg", "'Baie_des_chaleurs'")
 print(result)
-print(type(result))
-print(len(result))

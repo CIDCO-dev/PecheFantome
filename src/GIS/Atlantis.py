@@ -43,11 +43,11 @@ class GGDB:
 		
 	
 	def query(self,query):
-		# selection du type de query
+		#premade querys
 		if query == "trap" :
 			query = "SELECT * FROM crabnet.dfo_engins WHERE type='CASIER/CAGE - TRAP/POT'"
 			cursor = self.cnnx.cursor() 
-			cursor.execute(query) #executer query
+			cursor.execute(query)
 			self.result = cursor.fetchall()
 			return self.result
 		else: #if query is not pre-made by CIDCO
@@ -59,12 +59,12 @@ class GGDB:
 			except mysql.connector.Error as err : #if query is not valid , print its error
 				print(err)
 	
-	def toGPX(self, name, description):
+	def dfo_engins2GPX(self, name, description):
 		gpx = gpxpy.gpx.GPX()
 		gpx.name = name
 		gpx.description = description
 
-		# Pour tous les casiers rapportes
+		# For all trap
 		for trap in self.result:
 			longitude = trap[6]
 			latitude  = trap[7]
@@ -91,7 +91,18 @@ class GGDB:
 			query = "SELECT AsText(SHAPE) FROM "+table_name+" WHERE name ="+ polygon_name
 			cursor = self.cnnx.cursor() 
 			cursor.execute(query) #executer query
-			self.result = cursor.fetchall()
-			return self.result
+			result = cursor.fetchall()
+			tupl = result[0]
+			str_coord = tupl[0]
+			if (str_coord.startswith("POLYGON")):
+				str_coord = str_coord[9:-2]
+				coordinates = str_coord.split(",")
+				self.list_coordinates = []
+				for pair in coordinates:
+					pair = list(pair.split(" "))
+					self.list_coordinates.append(pair)
+			return self.list_coordinates
 		except mysql.connector.Error as err : #if query is not valid , print its error
 			print(err)
+			
+	

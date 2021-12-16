@@ -10,4 +10,4 @@ src/detector/yolov5
 .idea
 *pycache*
 venv/
-
+src/GIS/unit_tests/test.csv
