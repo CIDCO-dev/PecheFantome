@@ -3,6 +3,6 @@ train: images/
 val: images/
 
 #nc = number of class
-nc: 3
+nc: 4
 #in opensidescan when creating an inventory object, the object name has to match the class name
-names: ['crabpot', 'rope', shipwreck]
+names: ['crabpot', 'rope', 'shipwreck', 'ghostgear']

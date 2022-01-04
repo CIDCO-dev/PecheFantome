@@ -1,0 +1,13 @@
+
+shapefile:
+>pip install pyshp
+
+mysql:
+>pip install mysql-connector-python
+
+gpxpy:
+>pip install gpxpy
+GPX is the root element in the XML file. 
+
+GDAL
+>sudo apt install gdal-bin

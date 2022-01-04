@@ -1,6 +1,19 @@
-import atlantis
+import Atlantis
 
-area = atlantis.get_elements('Casiers perdus','Casiers de peche au crabe perdus')
-atlantis.export_to(area,"shapefile","test")
-atlantis.export_to(area,"gpx","test")
-atlantis.export_to(area,"csv","trap_location")
+
+"""
+db = Atlantis.GGDB()
+result = db.query("trap")
+#print(result)
+gpx = db.dfo_engins2GPX("test","testing")
+print(gpx)
+
+db2 = Atlantis.GGDB()
+result = db.query("show tables")
+print(result)
+result = db2.query("select * from acpg")
+print(result)
+"""
+db3 = Atlantis.GGDB()
+result = db3.extractSHP("acpg", "'Baie_des_chaleurs'")
+print(result)

@@ -1,5 +1,7 @@
 import shapefile
 import csv
+import os
+import subprocess
 
 #convertir des degrés a des sous-unités du degré 
 def deg2sud(latitude,longitude):
@@ -62,13 +64,14 @@ def sud2deg(latitude,longitude):
 
 def write_points_2csv(points_list, filename):
 	with open(filename+".csv", 'w', newline='') as csvfile:
-		file = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+		file = csv.writer(csvfile, delimiter=",", quotechar='|', quoting=csv.QUOTE_MINIMAL)
 		for coord in points_list:
 			file.writerow(coord)
-	
-def ecriture_polygon_2shp(dic,filename):
-	liste_element = list(dic)
 
+# dic = dictionary
+# key : string (polygon name), Value (list of point : vertex of polygon)
+def write_polygon_2shp(dic,filename):
+	liste_element = list(dic)
 	w = shapefile.Writer(filename)
 	w.field('name','c','40')
 	for element in liste_element:
@@ -77,7 +80,7 @@ def ecriture_polygon_2shp(dic,filename):
 		w.record(element)
 	w.close()
 
-def ecriture_points_2shp(liste_points, filename):
+def write_points_2shp(liste_points, filename):
 	w = shapefile.Writer(filename)
 	w.field('name', 'C')
 	w.multipoint(liste_points)
@@ -89,18 +92,33 @@ def Lat_Long_2_x_y(latitude,longitude):
 	x = longitude
 	return x,y
 
-def changer_direction(coord):
+def change_direction(coord):
 	coord = coord * -1
 	return coord
 
-
+#sudo apt install gdal-bin
+def extract_contour_Tiff_2_Shp(inputFilePath, outputPath, fileName):
+	gdal_contour = "/usr/bin/gdal_contour"
+	if not os.path.exists(inputFilePath):
+		print("input File Path does not exist")
+		return False
+	directoryName = os.path.basename(inputFilePath)
+	directory = directoryName[:-4]
+	outputPath = os.path.join(outputPath,directory)
+	if not os.path.exists(outputPath):
+		os.mkdir(outputPath)
+	fileName = fileName + ".shp"
+	outputPath = os.path.join(outputPath, fileName)
+	export = subprocess.Popen([gdal_contour, "-a", "sightings", "-i", "1", "-f", "ESRI Shapefile", inputFilePath, outputPath])
+	export.wait()
+	return True
 
 
 
 #zones = ['Baie des chaleurs','Canal de Grande-Rivière','Nord Shediac Valley','Western Bradelle Valley','Eastern Bradelle Valley']
 
 #sud_coordinates = [("47°56’13’’","65°18’01’’"),("47°54’25’’","65°18’01’’"),("48°06’18’’","64°36’00’’"),("48°12’03’’","64°36’00’’")],[("48°16’01’’","64°33’07’’"),("48°09’32’’","64°33’07’’"),("48°06’18’’","64°20’13’’"),("48°18’10’’","64°21’07’’")],[("48°27’36’’","63°48’39’’"),("48°07’04’’","64°00’00’’"),("48°07’04’’","63°45’00’’"),("48°27’36’’","63°25’15’’")],[("47°45’46’’","63°18’21’’"),("47°13’12’’","63°18’21’’"),("47°13’12’’","63°08’31’’"),("47°45’46’’","63°08’31’’")],[("47°35’27’’","62°34’04’’"),("47°01’00’’","62°38’13’’"),("47°01’00’’","62°26’20’’"),("47°35’27’’","62°25’55’’")]
-#print(coordinates[0])# return liste of point
+#print(coordinates[0])# return list of point
 #print(coordinates[0][0]) # return pair (x,y)
 #print (coordinates[0][0][0]) # return x or y
 
