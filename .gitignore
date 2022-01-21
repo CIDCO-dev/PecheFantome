@@ -1,0 +1,13 @@
+src/detector/yolov5/*
+src/detector/temp
+src/detector/backgroud
+src/detector/crabtrap
+src/detector/crab_trap_raw
+src/detector/raw_test_data
+src/detector/temp
+src/detector/test_data
+src/detector/yolov5
+.idea
+*pycache*
+venv/
+src/GIS/unit_tests/test.csv
