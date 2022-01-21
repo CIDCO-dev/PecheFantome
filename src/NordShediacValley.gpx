@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="gpx.py -- https://github.com/tkrajina/gpxpy">
+  <metadata>
+    <name>Nord Shediac Valley</name>
+    <desc>Casiers de peche au crabe perdus dans la zone Nord Shediac Valley</desc>
+  </metadata>
+  <wpt lat="48.3516666666667" lon="-63.7425">
+    <name>Casier 622</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.219" lon="-63.7352">
+    <name>Casier 6459</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.2322" lon="-63.763">
+    <name>Casier 6572</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.2422" lon="-63.7328">
+    <name>Casier 6833</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.3021" lon="-63.8639">
+    <name>Casier 6873</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.3148" lon="-63.8323">
+    <name>Casier 6923</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+</gpx>

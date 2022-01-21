@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="gpx.py -- https://github.com/tkrajina/gpxpy">
+  <metadata>
+    <name>Canal de Grande-Rivière</name>
+    <desc>Casiers de peche au crabe perdus dans la zone Canal de Grande-Rivière</desc>
+  </metadata>
+  <wpt lat="48.1569444444444" lon="-64.5316666666667">
+    <name>Casier 103</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.1602777777778" lon="-64.485">
+    <name>Casier 105</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.2736111111111" lon="-64.4277777777778">
+    <name>Casier 512</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.2005555555556" lon="-64.4669444444445">
+    <name>Casier 738</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.1722222222222" lon="-64.5133333333333">
+    <name>Casier 789</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.1897222222222" lon="-64.3833333333333">
+    <name>Casier 790</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.2422222222222" lon="-64.4036111111111">
+    <name>Casier 838</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.2422222222222" lon="-64.4036111111111">
+    <name>Casier 854</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.2408333333333" lon="-64.41">
+    <name>Casier 888</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.2258333333333" lon="-64.4355555555556">
+    <name>Casier 889</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.2308333333333" lon="-64.4363888888889">
+    <name>Casier 902</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.2683333333333" lon="-64.5305555555556">
+    <name>Casier 950</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.2667" lon="-64.3543">
+    <name>Casier 6456</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.204" lon="-64.379">
+    <name>Casier 6566</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.2008" lon="-64.4022">
+    <name>Casier 6925</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.153" lon="-64.4336">
+    <name>Casier 6979</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.1542" lon="-64.5018">
+    <name>Casier 6990</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.2721" lon="-64.5065">
+    <name>Casier 6995</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.2607" lon="-64.5402">
+    <name>Casier 7116</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+  <wpt lat="48.2083" lon="-64.3703">
+    <name>Casier 7167</name>
+    <desc>CASIER/CAGE - TRAP/POT</desc>
+    <sym>Marks-Mooring-Float</sym>
+  </wpt>
+</gpx>
