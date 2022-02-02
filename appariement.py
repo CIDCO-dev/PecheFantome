@@ -2,7 +2,7 @@ import xlrd
 import mysql.connector
 import datetime
 
-import re
+
 
 """Script pour le matching de dfo_engins_recuperes"""
 
