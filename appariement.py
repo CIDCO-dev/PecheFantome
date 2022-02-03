@@ -63,22 +63,22 @@ query = """INSERT INTO dfo_after_match VALUES (%s,%s, %s, %s, %s, %s, %s, %s, po
 
 restant_apres_match = {}
 
-for r in data: # r for row
+for result in data:
 
-    if r[9] == None:  # SI Aucun MATCH
+    if result[9] == None:  # SI Aucun MATCH
 
-        values = (r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7],  r[6], r[7], r[9], r[10], r[11], r[12], r[13], r[14], r[15], r[16],  r[16], (r[15]), r[18])
+        values = (result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7],  result[6], result[7], result[9], result[10], result[11], result[12], result[13], result[14], result[15], result[16],  result[16], result[15], result[18])
         # print("aucun match: ")
         # print("Perdu :    ", values[:8])
         # print("Recuperes :", values[10:])
 
     else:  # S'il y a un MATCH
-        if r[9] not in restant_apres_match: # Engin recupéré encore jamais matché
-            if r[12]<=r[3]:  # Qte recupérée < qte engin perdu
-                qt_engin=r[3]-r[12]
+        if result[9] not in restant_apres_match: # Engin recupéré encore jamais matché
+            if result[12]<=result[3]:  # Qte recupérée < qte engin perdu
+                qt_engin=result[3]-result[12]
                 recupere_restant =0
-                restant_apres_match.update({r[9]:recupere_restant})
-                values = (r[0], r[1], r[2], qt_engin, r[4], r[5], r[6], r[7],  r[6], r[7], r[9], r[10], r[11], recupere_restant, r[13], r[14], r[15], r[16],  r[16], (r[15]), r[18])
+                restant_apres_match.update({result[9]:recupere_restant})
+                values = (result[0], result[1], result[2], qt_engin, result[4], result[5], result[6], result[7],  result[6], result[7], result[9], result[10], result[11], recupere_restant, result[13], result[14], result[15], result[16],  result[16], result[15], result[18])
 
                 # print("first match: -------------------")
                 # print("Perdu :    ", values[:9])
@@ -86,17 +86,17 @@ for r in data: # r for row
 
             else:  # Qte recupérée > qte engin perdu
                 qt_engin= 0
-                recupere_restant=r[12]- r[3]
-                restant_apres_match.update({r[9]: recupere_restant})
-                values = (r[0], r[1], r[2], qt_engin, r[4], r[5], r[6], r[7],  r[6], r[7], r[9], r[10], r[11], recupere_restant, r[13], r[14], r[15], r[16],  r[16], (r[15]), r[18])
+                recupere_restant=result[12]- result[3]
+                restant_apres_match.update({result[9]: recupere_restant})
+                values = (result[0], result[1], result[2], qt_engin, result[4], result[5], result[6], result[7],  result[6], result[7], result[9], result[10], result[11], recupere_restant, result[13], result[14], result[15], result[16],  result[16], result[15], result[18])
 
                 # print("first match: Qte recuperes > qte perdu ")
                 # print("Perdu :    ", values[:9])
                 # print("Recuperes :",values[9:])
 
         else:  # Second Match pour engin récupéré
-            if restant_apres_match.get(r[9]) == 0: # si qte restante associé a id_r deja a 0
-                values = (r[0], r[1], r[2], qt_engin, r[4], r[5], r[6], r[7],  r[6], r[7], None, None, None, None, None, None, None, None,None,None,None)
+            if restant_apres_match.get(result[9]) == 0: # si qte restante associé a id_r deja a 0
+                values = (result[0], result[1], result[2], qt_engin, result[4], result[5], result[6], result[7],  result[6], result[7], None, None, None, None, None, None, None, None,None,None,None)
 
                 # print("AUTRE match: avec qte deja a 0 ")
                 # print("Perdu :    ",values[:9])
@@ -104,11 +104,11 @@ for r in data: # r for row
 
 
             else: # Second Match
-                recupere_restant = restant_apres_match.get(r[9])
-                if r[3]>=recupere_restant:
-                    qt_engin = r[3] - recupere_restant
-                    restant_apres_match.update({r[9]: 0})
-                    values = (r[0], r[1], r[2], qt_engin, r[4], r[5], r[6], r[7],  r[6], r[7], r[9], r[10], r[11], 0, r[13], r[14], r[15], r[16], r[16], (r[15]), r[18])
+                recupere_restant = restant_apres_match.get(result[9])
+                if result[3]>=recupere_restant:
+                    qt_engin = result[3] - recupere_restant
+                    restant_apres_match.update({result[9]: 0})
+                    values = (result[0], result[1], result[2], qt_engin, result[4], result[5], result[6], result[7],  result[6], result[7], result[9], result[10], result[11], 0, result[13], result[14], result[15], result[16],  result[16], result[15], result[18])
 
                     # print("Second match valide: -------------------")
                     # print("Perdu :    ",values[:9])
@@ -117,9 +117,9 @@ for r in data: # r for row
 
                 else: # plus de recupéré que de perdu
                     qt_engin = 0
-                    recupere_restant= recupere_restant-r[3]
-                    restant_apres_match.update({r[9]: recupere_restant})
-                    values = (r[0], r[1], r[2], qt_engin, r[4], r[5], r[6], r[7], r[6], r[7], r[9], r[10], r[11], recupere_restant, r[13], r[14], r[15], r[16], r[16], (r[15]), r[18])
+                    recupere_restant= recupere_restant-result[3]
+                    restant_apres_match.update({result[9]: recupere_restant})
+                    values = (result[0], result[1], result[2], qt_engin, result[4], result[5], result[6], result[7],  result[6], result[7], result[9], result[10], result[11], recupere_restant, result[13], result[14], result[15], result[16],  result[16], result[15], result[18])
 
                     # print("Second match valide: -----Reste encore des recupérés---")
                     # print("Perdu :    ",values[:9])
