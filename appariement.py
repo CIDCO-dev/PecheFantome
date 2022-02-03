@@ -58,7 +58,6 @@ order by t.id
 
 data= cursor.fetchall()
 
-query = """INSERT INTO dfo_after_match VALUES (%s,%s, %s, %s, %s, %s, %s, %s, point(%s,%s),%s,%s, %s, %s, %s, %s, %s, %s,point(%s,%s),%s);"""
 
 
 restant_apres_match = {}
@@ -125,7 +124,7 @@ for result in data:
                     # print("Perdu :    ",values[:9])
                     # print("Recuperes :",values[9:])
 
-    cursor.execute(query, values)
+    cursor.execute("INSERT INTO dfo_after_match VALUES (%s,%s, %s, %s, %s, %s, %s, %s, point(%s,%s),%s,%s, %s, %s, %s, %s, %s, %s,point(%s,%s),%s);", values)
 
 # Close the cursor
 cursor.close()
