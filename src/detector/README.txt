@@ -1,3 +1,5 @@
+# Documentation for YOLO:
+
 train : 
 python3 PATH/yolov5/yolo_git_repo/yolov5/train.py --img 640 --batch 4 --epoch 10 --data PATH/yolov5/train_data/data2021.yaml --cfg yolov5x.yaml --device cpu
 
