@@ -10,7 +10,7 @@ import pandas as pd
 from datetime import datetime
 import re
 
-"""Script pour importer 2021 - Lost and Retrieved Gear Report - dans dfo_engins_recuperes"""
+"""Script pour importer 2021 - Lost and Retrieved Gear Report - dans dfo_recuperes"""
 
 db = mysql.connector.connect(
   host="cidco.ca",
@@ -32,7 +32,7 @@ sheet=wb.sheet_by_index(1)
 cursor = db.cursor()
 
 table= """
-CREATE TABLE IF NOT EXISTS `dfo_engins_recuperes` (
+CREATE TABLE IF NOT EXISTS `dfo_recuperes` (
 `id` BIGINT(20)  NOT NULL   AUTO_INCREMENT PRIMARY KEY,
 `retrieved` DATETIME NOT NULL,
 `type` VARCHAR(255)  NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `dfo_engins_recuperes` (
 cursor.execute(table)
 
 # Create the INSERT INTO sql query
-query = "INSERT INTO dfo_engins_recuperes (retrieved, type, quantity, net_length, rope_length, LATITUDE, LONGITUDE, position) VALUES (%s, %s, %s, %s, %s, %s, %s, point(%s,%s))"
+query = "INSERT INTO dfo_recuperes (retrieved, type, quantity, net_length, rope_length, LATITUDE, LONGITUDE, position) VALUES (%s, %s, %s, %s, %s, %s, %s, point(%s,%s))"
 
 
 # Create a For loop to iterate through each row in the XLS file
