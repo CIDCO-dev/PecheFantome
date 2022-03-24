@@ -10,7 +10,7 @@ import pandas as pd
 from datetime import datetime
 import re
 
-"""Script pour importer  - 2020-07-15 - DFO-Lost-Gear - dans dfo_engins_recuperes"""
+"""Script pour importer  - 2020-07-15 - DFO-Lost-Gear - dans dfo_recuperes"""
 
 db = mysql.connector.connect(
   host="cidco.ca",
@@ -32,7 +32,7 @@ sheet=wb.sheet_by_index(1)
 cursor = db.cursor()
 
 table= """
-CREATE TABLE IF NOT EXISTS `dfo_engins_recuperes` (
+CREATE TABLE IF NOT EXISTS `dfo_recuperes` (
 `id` BIGINT(20)  NOT NULL   AUTO_INCREMENT PRIMARY KEY,
 `retrieved` DATETIME NOT NULL,
 `type` VARCHAR(255)  NOT NULL,
@@ -48,8 +48,11 @@ CREATE TABLE IF NOT EXISTS `dfo_engins_recuperes` (
 cursor.execute(table)
 
 # Create the INSERT INTO sql query
-query = "INSERT INTO dfo_engins_recuperes (retrieved, type, quantity, net_length, rope_length, LATITUDE, LONGITUDE, position) VALUES (%s, %s, %s, %s, %s, %s, %s, point(%s,%s))"
+query = "INSERT INTO dfo_recuperes (retrieved, type, quantity, net_length, rope_length, LATITUDE, LONGITUDE, position) VALUES (%s, %s, %s, %s, %s, %s, %s, point(%s,%s))"
 
+# Regex pour format de coordonées
+DMS = "[0-9]{2}\°[0-9]{2}\'."
+DDM="[0-9]{2}[\s\°][0-9]{2}[\.\,][0-9]{1,4}"
 
 # Create a For loop to iterate through each row in the XLS file
 #sheet.nrows
@@ -61,14 +64,7 @@ for r in range(1,sheet.nrows):
                 date = re.search("\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$", sheet.cell(r, 0).value)
                 if date != None:
                     retrieved = sheet.cell(r, 0).value
-                # else:
 
-                    # try:
-                    #     dateNum= sheet.cell(r, 0).value
-                    #     retrieved = datetime.date(*xlrd.xldate_as_tuple(dateNum, 0))
-                    # except:
-                    #     retrieved= None
-                    #     # pass
             except:
                 try:
                     dateNum = sheet.cell(r, 0).value
@@ -88,54 +84,75 @@ for r in range(1,sheet.nrows):
         rope_length	= sheet.cell(r,6).value
 
         try:
-            latre= re.split("\D", sheet.cell(r,8).value)
-            if latre[1] == "":
-                continue
-            else:
+            LATITUDE = None
+            LONGITUDE= None
+            if re.match(DMS, sheet.cell(r,8).value) !=None:    #   DMS to DD => DD = d + (min/60) + (sec/3600)
+                #---------- Latitude ---------- DMS
+                latre= re.split("\D", sheet.cell(r,8).value)
                 d= int(latre[0])
                 m=int(latre[1])
                 try:
                     s = float((str(latre[2]) + '.' + (str(latre[3]))))
-
                 except:
                     s=float(latre[2])
                 LATITUDE = d + (m / 60) + (s / 3600)
-        except:
-            continue
 
+                #---------- Longitude ---------- DMS
 
-        try:
-            lonre= re.split("\D", sheet.cell(r,9).value)
-            if lonre[1] == "":
-                continue
-            else:
+                lonre = re.split("\D", sheet.cell(r, 9).value)
+
                 d2 = int(lonre[0])
                 m2 = int(lonre[1])
                 try:
-                    s2=float((str(lonre[2]) + '.' + (str(lonre[3]))))
-                    # s2 = float(lonre[2] + (lonre[3]))
+                    s2 = float((str(lonre[2]) + '.' + (str(lonre[3]))))
+
                 except:
                     s2 = float(lonre[2])
-                LONGITUDE = 0-(d2 + (m2 / 60) + (s2 / 3600))
+                LONGITUDE = -(d2 + (m2 / 60) + (s2 / 3600))
+
+            elif re.match(DDM, sheet.cell(r, 8).value): # DD = Degrees + Decimal minutes / 60
+                # print(r + 1, ' => ')
+
+                #---------- Latitude ----------  DDM
+
+                latre = re.split("\D", sheet.cell(r, 8).value)
+                # print("DDM :", sheet.cell(r, 8).value)
+                Degrees_lat = int(latre[0])
+                minute_lat = int(latre[1])
+                decimal_lat = (latre[2])
+                dec_min_lat= float((str(minute_lat)) +'.' + (str(decimal_lat)))
+                LATITUDE = Degrees_lat + (dec_min_lat / 60)
+
+                #---------- Longitude ---------- DDM
+
+                lonre = re.split("\D", sheet.cell(r, 9).value)
+                # print("DDM :", sheet.cell(r, 9).value)
+                Degrees_long = int(lonre[0])
+                minute_long = int(lonre[1])
+                decimal_long = (lonre[2])
+                dec_min_long = float((str(minute_long)) +'.' + (str(decimal_long)))
+                LONGITUDE = -(Degrees_long + (dec_min_long / 60))
+
         except:
             continue
+
 
 # 		# Assign values from each row
         values = (retrieved, type, quantity, net_length, rope_length, LATITUDE, LONGITUDE, LONGITUDE, LATITUDE)
 
 # 		# Execute sql Query
         cursor.execute(query, values)
+        # print(r + 1, ' => OK ',(sheet.cell(r,8).value) , (sheet.cell(r,9).value ))
     except :
-        print (r+1 , ' => ', (sheet.cell(r,0).value) , (sheet.cell(r,8).value) , (sheet.cell(r,9).value ))
+        # print (r+1 , ' ERREUR => ', (sheet.cell(r,0).value) , (sheet.cell(r,8).value) , (sheet.cell(r,9).value ))
         continue
 # Close the cursor
 cursor.close()
 
  # Commit the transaction
 db.commit()
-#
- # Close the database connection
+
+# Close the database connection
 db.close()
-#
 
 print ("Completed")
