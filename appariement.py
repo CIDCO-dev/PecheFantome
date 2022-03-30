@@ -140,7 +140,7 @@ def main():
 def help():
     print("help")
 
-if sys.argv == 0:
+if sys.argv == 1:
   help()
 else:  
   print("argument détecté")
