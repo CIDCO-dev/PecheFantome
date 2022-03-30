@@ -1,68 +1,69 @@
 import xlrd
 import mysql.connector
 import datetime
+import sys
 
+def main():
+  """Script pour le matching de dfo_engins_recuperes"""
 
-"""Script pour le matching de dfo_engins_recuperes"""
+  db = mysql.connector.connect(
+    host="cidco.ca",
+    user="crabnet",
+    password="crabnet213141$",
+    database="crabnet"
+  )
 
-db = mysql.connector.connect(
-  host="cidco.ca",
-  user="crabnet",
-  password="crabnet213141$",
-  database="crabnet"
-)
+  cursor = db.cursor()
 
-cursor = db.cursor()
-
-# creation de la table si inexistante
-cursor.execute("""
-create table IF NOT EXISTS dfo_after_match(
-  `id` bigint(20) NOT NULL PRIMARY KEY ,
-  `reported` datetime NOT NULL,
-  `type` varchar(255) NOT NULL,
-  `quantity` bigint(20) NOT NULL,
-  `net_length` bigint(20) NOT NULL DEFAULT 0,
-  `rope_length` bigint(20) NOT NULL DEFAULT 0,
-  `LONGITUDE` double NOT NULL,
-  `LATITUDE` double NOT NULL,
-  `position` geometry NOT NULL,
-  `id_r` bigint(20)    ,
-  `retrieved_r` datetime  ,
-  `type_r` varchar(255)  ,
-  `quantity_r` bigint(20)  ,
-  `net_length_r` bigint(20)  ,
-  `rope_length_r` bigint(20)  ,
-  `LATITUDE_r` double  ,
-  `LONGITUDE_r` double ,
-  `position_r` geometry ,
-  `distance` double
+  # creation de la table si inexistante
+  cursor.execute("""
+  create table IF NOT EXISTS dfo_after_match(
+    `id` bigint(20) NOT NULL PRIMARY KEY ,
+    `reported` datetime NOT NULL,
+    `type` varchar(255) NOT NULL,
+    `quantity` bigint(20) NOT NULL,
+    `net_length` bigint(20) NOT NULL DEFAULT 0,
+    `rope_length` bigint(20) NOT NULL DEFAULT 0,
+    `LONGITUDE` double NOT NULL,
+    `LATITUDE` double NOT NULL,
+    `position` geometry NOT NULL,
+    `id_r` bigint(20)    ,
+    `retrieved_r` datetime  ,
+    `type_r` varchar(255)  ,
+    `quantity_r` bigint(20)  ,
+    `net_length_r` bigint(20)  ,
+    `rope_length_r` bigint(20)  ,
+    `LATITUDE_r` double  ,
+    `LONGITUDE_r` double ,
+    `position_r` geometry ,
+    `distance` double
   
-  ) ENGINE=InnoDB AUTO_INCREMENT=7210 DEFAULT CHARSET=latin1
+    ) ENGINE=InnoDB AUTO_INCREMENT=7210 DEFAULT CHARSET=latin1
+    ;
+  """)
+
+  # effacer les données deja presentes
+  cursor.execute("TRUNCATE dfo_after_match;")
+
+  # effectuer le match perdu/recupéré
+  cursor.execute("""SELECT distinct *,
+  ST_Distance_Sphere(t.position,c.position)
+  from dfo_engins t
+  left join 
+  ( select * from dfo_engins_recuperes ) c
+  on (ST_Distance_Sphere(t.position,c.position) <1000) 
+  group by t.id
+  order by t.id
   ;
-""")
+  """)
 
-# effacer les données deja presentes
-cursor.execute("TRUNCATE dfo_after_match;")
-
-# effectuer le match perdu/recupéré
-cursor.execute("""SELECT distinct *,
-ST_Distance_Sphere(t.position,c.position)
-from dfo_engins t
-left join 
-( select * from dfo_engins_recuperes ) c
-on (ST_Distance_Sphere(t.position,c.position) <1000) 
-group by t.id
-order by t.id
-;
-""")
-
-data= cursor.fetchall()
+  data= cursor.fetchall()
 
 
 
-restant_apres_match = {}
+  restant_apres_match = {}
 
-for result in data:
+  for result in data:
 
     if result[9] == None:  # SI Aucun MATCH
 
@@ -126,13 +127,20 @@ for result in data:
 
     cursor.execute("INSERT INTO dfo_after_match VALUES (%s,%s, %s, %s, %s, %s, %s, %s, point(%s,%s),%s,%s, %s, %s, %s, %s, %s, %s,point(%s,%s),%s);", values)
 
-# Close the cursor
-cursor.close()
+  # Close the cursor
+  cursor.close()
 
-# Commit the transaction
-db.commit()
-#
-# Close the database connection
-db.close()
-#
+  # Commit the transaction
+  db.commit()
+  #
+  # Close the database connection
+  db.close()
+  #
 
+def help():
+    print("help")
+
+if sys.argv == 0:
+  help()
+else:  
+  print("argument détecté")
