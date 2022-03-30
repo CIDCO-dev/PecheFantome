@@ -9,55 +9,57 @@ import mysql.connector
 import pandas as pd
 from datetime import datetime
 import re
+import sys
+import os
 
 """Script pour importer  - 2020-07-15 - DFO-Lost-Gear - dans dfo_recuperes"""
+def main():
+  db = mysql.connector.connect(
+    host=arg_host,
+    user=arg_user,
+    password=arg_password,
+    database=arg_database
+  )
 
-db = mysql.connector.connect(
-  host="cidco.ca",
-  user="crabnet",
-  password="crabnet213141$",
-  database="crabnet"
-)
 
+  # Choix du fichier excel et de l'onglet
+  file_name=arg_filename
+  #sheet="RETRIEVED - 2019-2020"
 
-# Choix du fichier excel et de l'onglet
-file_name="D:\CIDCO\dfo_engins_recuperes\\2020-07-15 - DFO-Lost-Gear.xlsx"
-#sheet="RETRIEVED - 2019-2020"
+  wb=xlrd.open_workbook(file_name)
+  sheet=wb.sheet_by_index(1)
+  #data = pd.read_excel(io=file_name, sheet_name=sheet, skiprows=0)
 
-wb=xlrd.open_workbook(file_name)
-sheet=wb.sheet_by_index(1)
-#data = pd.read_excel(io=file_name, sheet_name=sheet, skiprows=0)
+  # Get le curseur de la BD
+  cursor = db.cursor()
 
-# Get le curseur de la BD
-cursor = db.cursor()
+  table= """
+  CREATE TABLE IF NOT EXISTS `dfo_recuperes` (
+  `id` BIGINT(20)  NOT NULL   AUTO_INCREMENT PRIMARY KEY,
+  `retrieved` DATETIME NOT NULL,
+  `type` VARCHAR(255)  NOT NULL,
+  `quantity` BIGINT(20)  NOT NULL,
+  `net_length` BIGINT(20)  NOT NULL,
+  `rope_length` BIGINT(20)  NOT NULL,
+  `LATITUDE` DOUBLE  NOT NULL,
+  `LONGITUDE` DOUBLE  NOT NULL,
+  `position` GEOMETRY  NOT NULL     
 
-table= """
-CREATE TABLE IF NOT EXISTS `dfo_recuperes` (
-`id` BIGINT(20)  NOT NULL   AUTO_INCREMENT PRIMARY KEY,
-`retrieved` DATETIME NOT NULL,
-`type` VARCHAR(255)  NOT NULL,
-`quantity` BIGINT(20)  NOT NULL,
-`net_length` BIGINT(20)  NOT NULL,
-`rope_length` BIGINT(20)  NOT NULL,
-`LATITUDE` DOUBLE  NOT NULL,
-`LONGITUDE` DOUBLE  NOT NULL,
-`position` GEOMETRY  NOT NULL     
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT ='';
+  """
+  cursor.execute(table)
+  
+  # Create the INSERT INTO sql query
+  query = "INSERT INTO dfo_recuperes (retrieved, type, quantity, net_length, rope_length, LATITUDE, LONGITUDE, position) VALUES (%s, %s, %s, %s, %s, %s, %s, point(%s,%s))"
+ 
+  # Regex pour format de coordonées
+  DMS = "[0-9]{2}\°[0-9]{2}\'."
+  DDM="[0-9]{2}[\s\°][0-9]{2}[\.\,][0-9]{1,4}"
 
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT ='';
-"""
-cursor.execute(table)
+   # Create a For loop to iterate through each row in the XLS file
+  #sheet.nrows
 
-# Create the INSERT INTO sql query
-query = "INSERT INTO dfo_recuperes (retrieved, type, quantity, net_length, rope_length, LATITUDE, LONGITUDE, position) VALUES (%s, %s, %s, %s, %s, %s, %s, point(%s,%s))"
-
-# Regex pour format de coordonées
-DMS = "[0-9]{2}\°[0-9]{2}\'."
-DDM="[0-9]{2}[\s\°][0-9]{2}[\.\,][0-9]{1,4}"
-
-# Create a For loop to iterate through each row in the XLS file
-#sheet.nrows
-
-for r in range(1,sheet.nrows):
+  for r in range(1,sheet.nrows):
     try:
         try:
             try:
@@ -146,13 +148,80 @@ for r in range(1,sheet.nrows):
     except :
         # print (r+1 , ' ERREUR => ', (sheet.cell(r,0).value) , (sheet.cell(r,8).value) , (sheet.cell(r,9).value ))
         continue
-# Close the cursor
-cursor.close()
+  # Close the cursor
+  cursor.close()
 
- # Commit the transaction
-db.commit()
+  # Commit the transaction
+  db.commit()
 
-# Close the database connection
-db.close()
+  # Close the database connection
+  db.close()
 
-print ("Completed")
+  print ("Completed")
+  
+def loar_arg():  
+  global arg_host
+  global arg_user
+  global arg_password
+  global arg_database
+  global arg_filename
+  if sys.argv[1] == "-h":
+    help()
+  elif sys.argv[1] == "h": 
+    help()
+  elif sys.argv[1] == "-help": 
+    help()
+  elif sys.argv[1] == "help": 
+    help()
+  elif sys.argv[1] == "-H": 
+    help()
+  elif sys.argv[1] == "H": 
+    help()
+  elif sys.argv[1] == "-HELP": 
+    help()
+  elif sys.argv[1] == "HELP": 
+    help()
+  else:
+    arg_host=sys.argv[1]
+    arg_user=sys.argv[2]
+    arg_password=sys.argv[3]
+    arg_database=sys.argv[4]
+    arg_filename=sys.argv[5]
+    
+    main()
+  
+
+def help():
+  # Display Help
+  os.system('cls')    #clear screen for windows
+  os.system('clear')  #clear screen for linux and mac
+  print("Help")
+  print("")
+  print("Syntax: python ValideRetrived.py [options]")
+  print("")
+  print("Options:")
+  print("")
+  print("help or h          Print Help Page")
+  print("[Host]             Hostname or IP of the Database Server")
+  print("[User]             User name to access to the Database")
+  print("[Password]         Password to access to the Database")
+  print("[DB_name]          Name of the Database")
+  print("[filename]         File name")
+  print("")
+  print("Command line exemple.")
+  print("python3 ValideRetrived.py -help")
+  print("python3 ValideRetrived.py server_hostname user_name user_pass database_name file_name")
+  print("python3 ValideRetrived.py 192.168.1.100 user_test pass1234 data_test file.xlsx")
+  print("python3 ValideRetrived.py test.com user_test pass1234 data_test file.xlsx")
+  print("")
+  print("")
+  print("")
+  
+  
+
+if len(sys.argv) == 6:
+  loar_arg()
+else:  
+  help() # not the right amount of argument
+
+

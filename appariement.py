@@ -7,6 +7,8 @@ import os
 def main():
   """Script pour le matching de dfo_engins_recuperes"""
 
+# valider le nom du serveur ou le ip
+
   db = mysql.connector.connect(
     host=arg_host,
     user=arg_user,
