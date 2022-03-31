@@ -1,68 +1,72 @@
 import xlrd
 import mysql.connector
 import datetime
+import sys
+import os
 
+def main_script(arg_host, arg_user, arg_password, arg_database):
+  """Script pour le matching de dfo_engins_recuperes"""
 
-"""Script pour le matching de dfo_engins_recuperes"""
+# valider le nom du serveur ou le ip
 
-db = mysql.connector.connect(
-  host="cidco.ca",
-  user="crabnet",
-  password="crabnet213141$",
-  database="crabnet"
-)
+  db = mysql.connector.connect(
+    host=arg_host,
+    user=arg_user,
+    password=arg_password,
+    database=arg_database
+  )
+  print ("Connection to the database server")
+  cursor = db.cursor()
 
-cursor = db.cursor()
-
-# creation de la table si inexistante
-cursor.execute("""
-create table IF NOT EXISTS dfo_after_match(
-  `id` bigint(20) NOT NULL PRIMARY KEY ,
-  `reported` datetime NOT NULL,
-  `type` varchar(255) NOT NULL,
-  `quantity` bigint(20) NOT NULL,
-  `net_length` bigint(20) NOT NULL DEFAULT 0,
-  `rope_length` bigint(20) NOT NULL DEFAULT 0,
-  `LONGITUDE` double NOT NULL,
-  `LATITUDE` double NOT NULL,
-  `position` geometry NOT NULL,
-  `id_r` bigint(20)    ,
-  `retrieved_r` datetime  ,
-  `type_r` varchar(255)  ,
-  `quantity_r` bigint(20)  ,
-  `net_length_r` bigint(20)  ,
-  `rope_length_r` bigint(20)  ,
-  `LATITUDE_r` double  ,
-  `LONGITUDE_r` double ,
-  `position_r` geometry ,
-  `distance` double
+  # creation de la table si inexistante
+  cursor.execute("""
+  create table IF NOT EXISTS dfo_after_match(
+    `id` bigint(20) NOT NULL PRIMARY KEY ,
+    `reported` datetime NOT NULL,
+    `type` varchar(255) NOT NULL,
+    `quantity` bigint(20) NOT NULL,
+    `net_length` bigint(20) NOT NULL DEFAULT 0,
+    `rope_length` bigint(20) NOT NULL DEFAULT 0,
+    `LONGITUDE` double NOT NULL,
+    `LATITUDE` double NOT NULL,
+    `position` geometry NOT NULL,
+    `id_r` bigint(20)    ,
+    `retrieved_r` datetime  ,
+    `type_r` varchar(255)  ,
+    `quantity_r` bigint(20)  ,
+    `net_length_r` bigint(20)  ,
+    `rope_length_r` bigint(20)  ,
+    `LATITUDE_r` double  ,
+    `LONGITUDE_r` double ,
+    `position_r` geometry ,
+    `distance` double
   
-  ) ENGINE=InnoDB AUTO_INCREMENT=7210 DEFAULT CHARSET=latin1
+    ) ENGINE=InnoDB AUTO_INCREMENT=7210 DEFAULT CHARSET=latin1
+    ;
+  """)
+
+  # effacer les données deja presentes
+  cursor.execute("TRUNCATE dfo_after_match;")
+
+  # effectuer le match perdu/recupéré
+  cursor.execute("""SELECT distinct *,
+  ST_Distance_Sphere(t.position,c.position)
+  from dfo_engins t
+  left join 
+  ( select * from dfo_engins_recuperes ) c
+  on (ST_Distance_Sphere(t.position,c.position) <1000) 
+  group by t.id
+  order by t.id
   ;
-""")
+  """)
 
-# effacer les données deja presentes
-cursor.execute("TRUNCATE dfo_after_match;")
-
-# effectuer le match perdu/recupéré
-cursor.execute("""SELECT distinct *,
-ST_Distance_Sphere(t.position,c.position)
-from dfo_engins t
-left join 
-( select * from dfo_engins_recuperes ) c
-on (ST_Distance_Sphere(t.position,c.position) <1000) 
-group by t.id
-order by t.id
-;
-""")
-
-data= cursor.fetchall()
+  data= cursor.fetchall()
 
 
 
-restant_apres_match = {}
+  restant_apres_match = {}
 
-for result in data:
+  for result in data:
 
     if result[9] == None:  # SI Aucun MATCH
 
@@ -126,13 +130,57 @@ for result in data:
 
     cursor.execute("INSERT INTO dfo_after_match VALUES (%s,%s, %s, %s, %s, %s, %s, %s, point(%s,%s),%s,%s, %s, %s, %s, %s, %s, %s,point(%s,%s),%s);", values)
 
-# Close the cursor
-cursor.close()
+  
+  cursor.close() # Close the cursor
+  db.commit() # Commit the transaction
+  db.close()  # Close the database connection
+  print ("Completed")
+  
+def loar_arg():  
+  # Detect and load the arguments
+  if sys.argv[1] == "-h":
+    help()
+  elif sys.argv[1] == "-help": 
+    help()
+  else:
+    arg_host=sys.argv[1]
+    arg_user=sys.argv[2]
+    arg_password=sys.argv[3]
+    arg_database=sys.argv[4]
+    
+    main_script(arg_host, arg_user, arg_password, arg_database)
+  
 
-# Commit the transaction
-db.commit()
-#
-# Close the database connection
-db.close()
-#
+def help():
+  # Display Help
+  os.system('cls')    #clear screen for windows
+  os.system('clear')  #clear screen for linux and mac
+  print("Help")
+  print("")
+  print("Syntax: python match_crabtraps.py [options]")
+  print("")
+  print("Options:")
+  print("")
+  print("help or h          Print Help Page")
+  print("[Host]             Hostname or IP of the Database Server")
+  print("[User]             User name to access to the Database")
+  print("[Password]         Password to access to the Database")
+  print("[DB_name]          Name of the Database")
+  print("")
+  print("Command line exemple.")
+  print("python3 match_crabtraps.py -help")
+  print("python3 match_crabtraps.py server_hostname user_name user_pass database_name")
+  print("python3 match_crabtraps.py 192.168.1.100 user_test pass1234 data_test")
+  print("python3 match_crabtraps.py test.com user_test pass1234 data_test")
+  print("")
+  print("")
+  print("")
+  
+  
+
+if len(sys.argv) == 5:
+  loar_arg()
+else:  
+  help() # not the right amount of argument
+
 
