@@ -22,7 +22,7 @@ def main_script(arg_host, arg_user, arg_password, arg_database, arg_filename):
   )
 
 
-  # Choix du fichier excel et de l'onglet
+  #Récupération du fichier excel 
   file_name=arg_filename
   #sheet="RETRIEVED - 2019-2020"
 
@@ -56,7 +56,7 @@ def main_script(arg_host, arg_user, arg_password, arg_database, arg_filename):
   DMS = "[0-9]{2}\°[0-9]{2}\'."
   DDM="[0-9]{2}[\s\°][0-9]{2}[\.\,][0-9]{1,4}"
 
-   # Create a For loop to iterate through each row in the XLS file
+  # Create a For loop to iterate through each row in the XLS file
   #sheet.nrows
 
   for r in range(1,sheet.nrows):
@@ -75,10 +75,8 @@ def main_script(arg_host, arg_user, arg_password, arg_database, arg_filename):
                 except:
                     retrieved = None
                     continue
-
         except:
             continue
-
 
         type			= sheet.cell(r,3).value
         quantity		= sheet.cell(r,4).value
@@ -134,32 +132,22 @@ def main_script(arg_host, arg_user, arg_password, arg_database, arg_filename):
                 decimal_long = (lonre[2])
                 dec_min_long = float((str(minute_long)) +'.' + (str(decimal_long)))
                 LONGITUDE = -(Degrees_long + (dec_min_long / 60))
-
         except:
             continue
-
-
-# 		# Assign values from each row
-        values = (retrieved, type, quantity, net_length, rope_length, LATITUDE, LONGITUDE, LONGITUDE, LATITUDE)
-
-# 		# Execute sql Query
-        cursor.execute(query, values)
+        values = (retrieved, type, quantity, net_length, rope_length, LATITUDE, LONGITUDE, LONGITUDE, LATITUDE)  # Assign values from each row
+        cursor.execute(query, values)  # Execute sql Query
         # print(r + 1, ' => OK ',(sheet.cell(r,8).value) , (sheet.cell(r,9).value ))
     except :
         # print (r+1 , ' ERREUR => ', (sheet.cell(r,0).value) , (sheet.cell(r,8).value) , (sheet.cell(r,9).value ))
         continue
-  # Close the cursor
-  cursor.close()
-
-  # Commit the transaction
-  db.commit()
-
-  # Close the database connection
-  db.close()
-
+  
+  cursor.close() # Close the cursor
+  db.commit() # Commit the transaction
+  db.close()  # Close the database connection
   print ("Completed")
   
 def loar_arg():  
+  # Detect and load the arguments
   if sys.argv[1] == "-h":
     help()
   elif sys.argv[1] == "-help": 

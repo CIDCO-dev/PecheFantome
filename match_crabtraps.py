@@ -4,7 +4,7 @@ import datetime
 import sys
 import os
 
-def main_script(arg_host, arg_user, arg_password, arg_database, arg_filename):
+def main_script(arg_host, arg_user, arg_password, arg_database):
   """Script pour le matching de dfo_engins_recuperes"""
 
 # valider le nom du serveur ou le ip
@@ -15,7 +15,7 @@ def main_script(arg_host, arg_user, arg_password, arg_database, arg_filename):
     password=arg_password,
     database=arg_database
   )
-
+  print ("Connection to the database server")
   cursor = db.cursor()
 
   # creation de la table si inexistante
@@ -130,17 +130,14 @@ def main_script(arg_host, arg_user, arg_password, arg_database, arg_filename):
 
     cursor.execute("INSERT INTO dfo_after_match VALUES (%s,%s, %s, %s, %s, %s, %s, %s, point(%s,%s),%s,%s, %s, %s, %s, %s, %s, %s,point(%s,%s),%s);", values)
 
-  # Close the cursor
-  cursor.close()
-
-  # Commit the transaction
-  db.commit()
-  #
-  # Close the database connection
-  db.close()
-  #
+  
+  cursor.close() # Close the cursor
+  db.commit() # Commit the transaction
+  db.close()  # Close the database connection
+  print ("Completed")
   
 def loar_arg():  
+  # Detect and load the arguments
   if sys.argv[1] == "-h":
     help()
   elif sys.argv[1] == "-help": 
@@ -151,7 +148,7 @@ def loar_arg():
     arg_password=sys.argv[3]
     arg_database=sys.argv[4]
     
-    main_script(arg_host, arg_user, arg_password, arg_database, arg_filename)
+    main_script(arg_host, arg_user, arg_password, arg_database)
   
 
 def help():

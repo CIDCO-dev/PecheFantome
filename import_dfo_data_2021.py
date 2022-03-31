@@ -22,7 +22,7 @@ def main_script(arg_host, arg_user, arg_password, arg_database, arg_filename):
     database=arg_database
   )
 
-  # Choix du fichier excel et de l'onglet
+  # Récupération du fichier excel 
   file_name=arg_filename
 
 
@@ -99,22 +99,16 @@ def main_script(arg_host, arg_user, arg_password, arg_database, arg_filename):
     except :
         print (r+1 , ' => ', (sheet.cell(r,0).value) , (sheet.cell(r,8).value) , (sheet.cell(r,9).value ))
         continue
-  # Close the cursor
-  cursor.close()
-
-  # Commit the transaction
-  db.commit()
-  #
-  # Close the database connection
-  db.close()
- #
-
+  
+  cursor.close() # Close the cursor
+  db.commit() # Commit the transaction
+  db.close()  # Close the database connection
   print ("Completed")
   
   
     
 def loar_arg():  
-
+  # Detect and load the arguments
   if sys.argv[1] == "-h":
     help()
   elif sys.argv[1] == "-help": 
