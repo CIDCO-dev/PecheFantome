@@ -13,7 +13,7 @@ import sys
 import os
 
 """Script pour importer  - 2020-07-15 - DFO-Lost-Gear - dans dfo_recuperes"""
-def main():
+def main_script(arg_host, arg_user, arg_password, arg_database, arg_filename):
   db = mysql.connector.connect(
     host=arg_host,
     user=arg_user,
@@ -160,26 +160,9 @@ def main():
   print ("Completed")
   
 def loar_arg():  
-  global arg_host
-  global arg_user
-  global arg_password
-  global arg_database
-  global arg_filename
   if sys.argv[1] == "-h":
     help()
-  elif sys.argv[1] == "h": 
-    help()
   elif sys.argv[1] == "-help": 
-    help()
-  elif sys.argv[1] == "help": 
-    help()
-  elif sys.argv[1] == "-H": 
-    help()
-  elif sys.argv[1] == "H": 
-    help()
-  elif sys.argv[1] == "-HELP": 
-    help()
-  elif sys.argv[1] == "HELP": 
     help()
   else:
     arg_host=sys.argv[1]
@@ -188,7 +171,7 @@ def loar_arg():
     arg_database=sys.argv[4]
     arg_filename=sys.argv[5]
     
-    main()
+    main_script(arg_host, arg_user, arg_password, arg_database, arg_filename)
   
 
 def help():
