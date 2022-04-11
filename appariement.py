@@ -3,7 +3,7 @@ import mysql.connector
 import datetime
 
 
-"""Script pour le matching de dfo_engins_recuperes"""
+"""Script pour le matching de dfo_recuperes"""
 
 db = mysql.connector.connect(
   host="cidco.ca",
@@ -49,7 +49,7 @@ cursor.execute("""SELECT distinct *,
 ST_Distance_Sphere(t.position,c.position)
 from dfo_engins t
 left join 
-( select * from dfo_engins_recuperes ) c
+( select * from dfo_recuperes ) c
 on (ST_Distance_Sphere(t.position,c.position) <1000) 
 group by t.id
 order by t.id
