@@ -9,55 +9,57 @@ import mysql.connector
 import pandas as pd
 from datetime import datetime
 import re
+import sys
+import os
 
 """Script pour importer  - 2020-07-15 - DFO-Lost-Gear - dans dfo_recuperes"""
+def main_script(arg_host, arg_user, arg_password, arg_database, arg_filename):
+  db = mysql.connector.connect(
+    host=arg_host,
+    user=arg_user,
+    password=arg_password,
+    database=arg_database
+  )
 
-db = mysql.connector.connect(
-  host="cidco.ca",
-  user="crabnet",
-  password="crabnet213141$",
-  database="crabnet"
-)
 
+  #Récupération du fichier excel 
+  file_name=arg_filename
+  #sheet="RETRIEVED - 2019-2020"
 
-# Choix du fichier excel et de l'onglet
-file_name="D:\CIDCO\dfo_engins_recuperes\\2020-07-15 - DFO-Lost-Gear.xlsx"
-#sheet="RETRIEVED - 2019-2020"
+  wb=xlrd.open_workbook(file_name)
+  sheet=wb.sheet_by_index(1)
+  #data = pd.read_excel(io=file_name, sheet_name=sheet, skiprows=0)
 
-wb=xlrd.open_workbook(file_name)
-sheet=wb.sheet_by_index(1)
-#data = pd.read_excel(io=file_name, sheet_name=sheet, skiprows=0)
+  # Get le curseur de la BD
+  cursor = db.cursor()
 
-# Get le curseur de la BD
-cursor = db.cursor()
+  table= """
+  CREATE TABLE IF NOT EXISTS `dfo_recuperes` (
+  `id` BIGINT(20)  NOT NULL   AUTO_INCREMENT PRIMARY KEY,
+  `retrieved` DATETIME NOT NULL,
+  `type` VARCHAR(255)  NOT NULL,
+  `quantity` BIGINT(20)  NOT NULL,
+  `net_length` BIGINT(20)  NOT NULL,
+  `rope_length` BIGINT(20)  NOT NULL,
+  `LATITUDE` DOUBLE  NOT NULL,
+  `LONGITUDE` DOUBLE  NOT NULL,
+  `position` GEOMETRY  NOT NULL     
 
-table= """
-CREATE TABLE IF NOT EXISTS `dfo_recuperes` (
-`id` BIGINT(20)  NOT NULL   AUTO_INCREMENT PRIMARY KEY,
-`retrieved` DATETIME NOT NULL,
-`type` VARCHAR(255)  NOT NULL,
-`quantity` BIGINT(20)  NOT NULL,
-`net_length` BIGINT(20)  NOT NULL,
-`rope_length` BIGINT(20)  NOT NULL,
-`LATITUDE` DOUBLE  NOT NULL,
-`LONGITUDE` DOUBLE  NOT NULL,
-`position` GEOMETRY  NOT NULL     
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT ='';
+  """
+  cursor.execute(table)
+  
+  # Create the INSERT INTO sql query
+  query = "INSERT INTO dfo_recuperes (retrieved, type, quantity, net_length, rope_length, LATITUDE, LONGITUDE, position) VALUES (%s, %s, %s, %s, %s, %s, %s, point(%s,%s))"
+ 
+  # Regex pour format de coordonées
+  DMS = "[0-9]{2}\°[0-9]{2}\'."
+  DDM="[0-9]{2}[\s\°][0-9]{2}[\.\,][0-9]{1,4}"
 
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT ='';
-"""
-cursor.execute(table)
+  # Create a For loop to iterate through each row in the XLS file
+  #sheet.nrows
 
-# Create the INSERT INTO sql query
-query = "INSERT INTO dfo_recuperes (retrieved, type, quantity, net_length, rope_length, LATITUDE, LONGITUDE, position) VALUES (%s, %s, %s, %s, %s, %s, %s, point(%s,%s))"
-
-# Regex pour format de coordonées
-DMS = "[0-9]{2}\°[0-9]{2}\'."
-DDM="[0-9]{2}[\s\°][0-9]{2}[\.\,][0-9]{1,4}"
-
-# Create a For loop to iterate through each row in the XLS file
-#sheet.nrows
-
-for r in range(1,sheet.nrows):
+  for r in range(1,sheet.nrows):
     try:
         try:
             try:
@@ -73,10 +75,8 @@ for r in range(1,sheet.nrows):
                 except:
                     retrieved = None
                     continue
-
         except:
             continue
-
 
         type			= sheet.cell(r,3).value
         quantity		= sheet.cell(r,4).value
@@ -132,27 +132,67 @@ for r in range(1,sheet.nrows):
                 decimal_long = (lonre[2])
                 dec_min_long = float((str(minute_long)) +'.' + (str(decimal_long)))
                 LONGITUDE = -(Degrees_long + (dec_min_long / 60))
-
         except:
             continue
-
-
-# 		# Assign values from each row
-        values = (retrieved, type, quantity, net_length, rope_length, LATITUDE, LONGITUDE, LONGITUDE, LATITUDE)
-
-# 		# Execute sql Query
-        cursor.execute(query, values)
+        values = (retrieved, type, quantity, net_length, rope_length, LATITUDE, LONGITUDE, LONGITUDE, LATITUDE)  # Assign values from each row
+        cursor.execute(query, values)  # Execute sql Query
         # print(r + 1, ' => OK ',(sheet.cell(r,8).value) , (sheet.cell(r,9).value ))
     except :
         # print (r+1 , ' ERREUR => ', (sheet.cell(r,0).value) , (sheet.cell(r,8).value) , (sheet.cell(r,9).value ))
         continue
-# Close the cursor
-cursor.close()
+  
+  cursor.close() # Close the cursor
+  db.commit() # Commit the transaction
+  db.close()  # Close the database connection
+  print ("Completed")
+  
+def loar_arg():  
+  # Detect and load the arguments
+  if sys.argv[1] == "-h":
+    help()
+  elif sys.argv[1] == "-help": 
+    help()
+  else:
+    arg_host=sys.argv[1]
+    arg_user=sys.argv[2]
+    arg_password=sys.argv[3]
+    arg_database=sys.argv[4]
+    arg_filename=sys.argv[5]
+    
+    main_script(arg_host, arg_user, arg_password, arg_database, arg_filename)
+  
 
- # Commit the transaction
-db.commit()
+def help():
+  # Display Help
+  os.system('cls')    #clear screen for windows
+  os.system('clear')  #clear screen for linux and mac
+  print("Help")
+  print("")
+  print("Syntax: python import_dfo_data.py [options]")
+  print("")
+  print("Options:")
+  print("")
+  print("help or h          Print Help Page")
+  print("[Host]             Hostname or IP of the Database Server")
+  print("[User]             User name to access to the Database")
+  print("[Password]         Password to access to the Database")
+  print("[DB_name]          Name of the Database")
+  print("[filename]         File name")
+  print("")
+  print("Command line exemple.")
+  print("python3 import_dfo_data.py -help")
+  print("python3 import_dfo_data.py server_hostname user_name user_pass database_name file_name")
+  print("python3 import_dfo_data.py 192.168.1.100 user_test pass1234 data_test file.xlsx")
+  print("python3 import_dfo_data.py test.com user_test pass1234 data_test file.xlsx")
+  print("")
+  print("")
+  print("")
+  
+  
 
-# Close the database connection
-db.close()
+if len(sys.argv) == 6:
+  loar_arg()
+else:  
+  help() # not the right amount of argument
 
-print ("Completed")
+
