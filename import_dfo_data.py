@@ -12,21 +12,55 @@ import re
 import sys
 import os
 
-"""Script pour importer  - 2020-07-15 - DFO-Lost-Gear - dans dfo_recuperes"""
-def main_script(arg_host, arg_user, arg_password, arg_database, arg_filename):
+
+def display_help_message():
+  # Display Help
+  os.system('cls')    #clear screen for windows
+  os.system('clear')  #clear screen for linux and mac
+  print("Help")
+  print("")
+  print("Syntax: python import_dfo_data.py [options]")
+  print("")
+  print("Options:")
+  print("")
+  print("help or h          Print Help Page")
+  print("[Host]             Hostname or IP of the Database Server")
+  print("[User]             User name to access to the Database")
+  print("[Password]         Password to access to the Database")
+  print("[DB_name]          Name of the Database")
+  print("[filename]         File name")
+  print("")
+  print("Command line exemple.")
+  print("python3 import_dfo_data.py -help")
+  print("python3 import_dfo_data.py server_hostname user_name user_pass database_name file_name")
+  print("python3 import_dfo_data.py 192.168.1.100 user_test pass1234 data_test file.xlsx")
+  print("python3 import_dfo_data.py test.com user_test pass1234 data_test file.xlsx")
+  print("")
+  print("")
+  print("")
+  
+  
+
+if len(sys.argv) != 6:
+  display_help_message() # not the right amount of argument
+else: 
+  # Load command line arguments  
+  db_host=sys.argv[1]
+  db_user=sys.argv[2]
+  db_password=sys.argv[3]
+  db_database_name=sys.argv[4]
+  input_filename=sys.argv[5]
+
+  # Open database connection
   db = mysql.connector.connect(
-    host=arg_host,
-    user=arg_user,
-    password=arg_password,
-    database=arg_database
+    host=db_host,
+    user=db_user,
+    password=db_password,
+    database=db_database_name
   )
 
-
   #Récupération du fichier excel 
-  file_name=arg_filename
-  #sheet="RETRIEVED - 2019-2020"
-
-  wb=xlrd.open_workbook(file_name)
+  wb=xlrd.open_workbook(input_filename)
   sheet=wb.sheet_by_index(1)
   #data = pd.read_excel(io=file_name, sheet_name=sheet, skiprows=0)
 
@@ -145,54 +179,3 @@ def main_script(arg_host, arg_user, arg_password, arg_database, arg_filename):
   db.commit() # Commit the transaction
   db.close()  # Close the database connection
   print ("Completed")
-  
-def loar_arg():  
-  # Detect and load the arguments
-  if sys.argv[1] == "-h":
-    help()
-  elif sys.argv[1] == "-help": 
-    help()
-  else:
-    arg_host=sys.argv[1]
-    arg_user=sys.argv[2]
-    arg_password=sys.argv[3]
-    arg_database=sys.argv[4]
-    arg_filename=sys.argv[5]
-    
-    main_script(arg_host, arg_user, arg_password, arg_database, arg_filename)
-  
-
-def help():
-  # Display Help
-  os.system('cls')    #clear screen for windows
-  os.system('clear')  #clear screen for linux and mac
-  print("Help")
-  print("")
-  print("Syntax: python import_dfo_data.py [options]")
-  print("")
-  print("Options:")
-  print("")
-  print("help or h          Print Help Page")
-  print("[Host]             Hostname or IP of the Database Server")
-  print("[User]             User name to access to the Database")
-  print("[Password]         Password to access to the Database")
-  print("[DB_name]          Name of the Database")
-  print("[filename]         File name")
-  print("")
-  print("Command line exemple.")
-  print("python3 import_dfo_data.py -help")
-  print("python3 import_dfo_data.py server_hostname user_name user_pass database_name file_name")
-  print("python3 import_dfo_data.py 192.168.1.100 user_test pass1234 data_test file.xlsx")
-  print("python3 import_dfo_data.py test.com user_test pass1234 data_test file.xlsx")
-  print("")
-  print("")
-  print("")
-  
-  
-
-if len(sys.argv) == 6:
-  loar_arg()
-else:  
-  help() # not the right amount of argument
-
-
