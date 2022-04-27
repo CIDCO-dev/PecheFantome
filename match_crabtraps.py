@@ -45,10 +45,10 @@ else:
 
   # Open database connection
   db = mysql.connector.connect(
-    host=arg_host,
-    user=arg_user,
-    password=arg_password,
-    database=arg_database
+    host=db_host,
+    user=db_user,
+    password=db_password,
+    database=db_database
   )
   print ("Connection to the database server")
   cursor = db.cursor()
