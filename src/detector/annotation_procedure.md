@@ -9,9 +9,7 @@ find RÉPERTOIRE_XTF -name "*.xtf" -exec sidescan-dump {} \;
 
 4. Dans le répertoire de la mission (répertoire des fichiers xtf téléchargés)
 ```
-mkdir xtf
-mkdir jpg
-mkdir "1920x1080"
+mkdir xtf "1920x1080" jpg 
 ```
 5. Déplacer les images générés à l'étape 3 dans le répertoire *jpg* créer à l'étape précédente
 ```
@@ -28,7 +26,7 @@ cp -r /data/dataset/Ghost_Gear /data/dataset/Ghost_Gear.bak
 ```
 
 8. Via la connexion rdp ouvrir un navigateur et naviguer à l'addresse http://localhost:8080
-8. Entrer votre nom d'utilisateur et mot de passe pour cvat
+8. Entrer le nom d'utilisateur et le mot de passe pour cvat
 8. **Optionel** Dans la situation où un **projet** doit être créé : cliquer sur *projects* et puis sur *Create new Project* et créer les labels nécessaires
 8. Cliquer sur le bouton *Create new task* et nommer la tâche avec le numéro de mission
 8. Une fois l'annotation terminé, cliquer sur *menu* => *export task dataset* et ensuite choisir le format *YOLO 1.1*
