@@ -6,7 +6,6 @@
 ```
 find RÉPERTOIRE_XTF -name "*.xtf" -exec sidescan-dump {} \;
 ```
-**not working till this is fixed** : https://github.com/CIDCO-dev/OpenSidescan/issues/158
 
 4. Dans le répertoire de la mission (répertoire des fichiers xtf téléchargés)
 ```
