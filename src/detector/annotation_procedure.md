@@ -57,7 +57,7 @@ sudo su dany
 ```
 ./train_new.sh (résolution max) (nb epoch) (yaml path) (dataset path) (résultat path) (nom du projet)
 ```
-./train_new.sh 1920 500 /data/dataset/Ghost_Gear/Ghost_Gear.yaml /data/dataset/Ghost_Gear/ 20220824_500epoch
+./train_new.sh 1920 500 /data/dataset/Ghost_Gear/Ghost_Gear.yaml /data/train_result date_nbEpoch
 ```
 
 18. Tester le model une fois l'entrainement terminé avec les images https://github.com/CIDCO-dev/OpenSidescan/tree/master/test/data/ghostfishinggear
