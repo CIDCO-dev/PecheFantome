@@ -20,27 +20,37 @@ mv *.jpg jpg/
 cd jpg/
 for file in *; do convert $file -crop 1920x1080 ../1920x1080/$file%04d.jpg; done
 ```
-7. faire un backup du dernier entrainement
+7. Supprimmer les fragments d'images trop petits avec ce scripts : PecheFantome/src/detectordelete_bad_images.py
+```
+python3 delete_bad_images.py PATH
+```
+
+8. faire un backup du dernier entrainement
 ```
 sudo cp -r /data/dataset/Ghost_Gear /data/dataset/Ghost_Gear.bak
 ```
 
-8. Via la connexion rdp ouvrir un navigateur et naviguer à l'addresse http://localhost:8080
-8. Entrer le nom d'utilisateur et le mot de passe pour cvat
-8. Cliquer sur le bouton *Create new task* et nommer la tâche avec le numéro de mission
-8. Ouvrir la tache puis cliquer sur le job ID et commencer à annotater en appuyant sur la touche *n*
-8. Une fois l'annotation terminé, enregistrer puis ensuite cliquer sur *menu* => *export task dataset* et ensuite choisir le format *YOLO 1.1*
-8. Télécharger et dézipper le jeu de données
-8. À partir du répertoire déziper du nouveau jeu de données, transférer les labels dans le jeu de données
+9. Via la connexion rdp ouvrir un navigateur et naviguer à l'addresse http://localhost:8080
+9. Entrer le nom d'utilisateur et le mot de passe pour cvat
+9. Cliquer sur le bouton *Create new task* et nommer la tâche avec le numéro de mission
+9. Ouvrir la tache puis cliquer sur le job ID et commencer à annotater en appuyant sur la touche *n*
+9. Une fois l'annotation terminé, enregistrer puis ensuite cliquer sur *menu* => *export task dataset* et ensuite choisir le format *YOLO 1.1*
+9. Télécharger et dézipper le jeu de données
+9. À partir du répertoire déziper du nouveau jeu de données, transférer les labels dans le jeu de données
 ```
 sudo mv -i obj_train_data/* /data/dataset/Ghost_Gear/data/labels/
 ```
-15. Ajouter les nouvelles données au jeu précédent.
+16. Ajouter les nouvelles données au jeu précédent.
 Dans le repertoire de la mission créer lors du téléchargements des fichiers xtf, il devrait y avoir les répertoires créés à l'étape 4
+Déplacer entre 10% et 20% d'images dans le répertoire val
+```
+sudo mv `ls 1920x1080/ | head -NbImages` /data/dataset/Ghost_Gear/data/val/
+```
+Déplacer le reste des images
 ```
 sudo mv -i 1920x1080/* /data/dataset/Ghost_Gear/data/images/
 ```
-16. Prêt pour lancer un nouvel entrainement
+17. Prêt pour lancer un nouvel entrainement
 ```
 cd /data
 sudo su dany
@@ -49,10 +59,6 @@ sudo su dany
 ```
 ./train_new.sh 1920 500 /data/dataset/Ghost_Gear/Ghost_Gear.yaml /data/dataset/Ghost_Gear/ 20220824_500epoch
 ```
-17. Vérifier que tout est bon : le output de ces commandes devraient être les même que ceux donné par le output de l'entrainement
-```
-cd /data/dataset/Ghost_Gear/data
-find labels -size +0 -type f | xargs wc -l
-ls images/ | wc -l
-```
+
+18. Tester le model une fois l'entrainement terminé avec les images https://github.com/CIDCO-dev/OpenSidescan/tree/master/test/data/ghostfishinggear
 
