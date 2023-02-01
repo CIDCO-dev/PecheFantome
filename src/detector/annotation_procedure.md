@@ -4,7 +4,7 @@
 1. Télécharger les fichiers xtf via l'interface web du nas à partir du serveur tsunami ou transférer les fichiers xtf sur le serveur tsunami avec une connexion sftp
 1. Convertir les fichiers xtf en image jpg
 ```
-find PATH/RÉPERTOIRE_XTF -name "*.xtf" -exec sidescan-dump {} \;
+sudo find PATH/RÉPERTOIRE_XTF -name "*.xtf" -exec sidescan-dump {} \;
 ```
 
 4. Dans le répertoire de la mission (répertoire des fichiers xtf téléchargés)
@@ -41,10 +41,11 @@ sudo cp -r /data/dataset/Ghost_Gear /data/dataset/Ghost_Gear.bak
 sudo mv -i obj_train_data/* /data/dataset/Ghost_Gear/data/labels/
 ```
 16. Ajouter les nouvelles données au jeu précédent.
-Dans le repertoire de la mission créer lors du téléchargements des fichiers xtf, il devrait y avoir les répertoires créés à l'étape 4
+Dans le repertoire de la mission créer lors du téléchargements des fichiers xtf, il devrait y avoir les répertoires créés à l'étape 4. 
+\
 Déplacer entre 10% et 20% d'images dans le répertoire val
 ```
-sudo mv `ls 1920x1080/ | head -NbImages` /data/dataset/Ghost_Gear/data/val/
+sudo mv `ls 1920x1080/ | head -n nbImages` /data/dataset/Ghost_Gear/data/val/
 ```
 Déplacer le reste des images
 ```
@@ -60,5 +61,11 @@ sudo su dany
 ./train_new.sh 1920 500 /data/dataset/Ghost_Gear/Ghost_Gear.yaml /data/train_result date_nbEpoch
 ```
 
-18. Tester le model une fois l'entrainement terminé avec les images https://github.com/CIDCO-dev/OpenSidescan/tree/master/test/data/ghostfishinggear
+18. Tester le model une fois l'entrainement terminé
+Modifier les 3 variables PATH/best.pt    OUTPUT_RESULT_PATH     RESULT_NAME
+```
+bash detect.sh /data/dataset/Ghost_Gear/data/test_model_images/ PATH/best.pt  OUTPUT_RESULT_PATH RESULT_NAME 0.25 1920 /data/dataset/Ghost_Gear/Ghost_Gear.yaml
+```
+Puis vérifié que tous les casiers ont bien été détecté. Les images se trouvent dans le répertoire OUTPUT_RESULT_PATH/RESULT_NAME
+
 
